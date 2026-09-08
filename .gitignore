@@ -1,0 +1,13 @@
+# regenerable outputs
+/out/
+/external/
+
+# python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# never commit corpora or weights
+*.pth
+*.ckpt
+*.pt

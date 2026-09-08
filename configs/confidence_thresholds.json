@@ -1,0 +1,66 @@
+{
+ "_meta": {
+  "scope": "prior present AND draft silent (the Eq. 3 coverage scope)",
+  "calib": "fitted on the sw validation split, n=464 in-scope pairs",
+  "pos_rule": "tau_pos = confidence at P(pos|c) = base_in_scope; looser than P=0.5, so more persistent findings are covered and tagged 'unchanged'",
+  "neg_rule": "tau_neg = confidence at P(pos|c) = base_in_scope/2; the resolved (negative) branch",
+  "fields": "n = in-scope validation pairs; base_in_scope = positive rate in scope; open_pos/open_neg = whether that branch is enabled for this finding; _alt_tau_pos_P50 = the alternative operating point at P=0.5, reported in App. G, not adopted",
+  "closed": "pleural_effusion and consolidation are absent / closed: too few clean validation pairs (App. C)",
+  "paper": "Table 6, App. C"
+ },
+ "cardiomegaly": {
+  "n": 32,
+  "base_in_scope": 0.5,
+  "open_pos": true,
+  "open_neg": false,
+  "tau_pos": 4.331,
+  "_alt_tau_pos_P50": 4.331
+ },
+ "lung_opacity": {
+  "n": 77,
+  "base_in_scope": 0.338,
+  "open_pos": true,
+  "open_neg": true,
+  "tau_pos": 7.245,
+  "_alt_tau_pos_P50": 10.749,
+  "tau_neg": 2.459
+ },
+ "lung_lesion": {
+  "n": 22,
+  "base_in_scope": 0.409,
+  "open_pos": false,
+  "open_neg": false
+ },
+ "edema": {
+  "n": 32,
+  "base_in_scope": 0.219,
+  "open_pos": true,
+  "open_neg": true,
+  "tau_pos": 2.197,
+  "_alt_tau_pos_P50": 5.485,
+  "tau_neg": 0.068
+ },
+ "pneumonia": {
+  "n": 34,
+  "base_in_scope": 0.118,
+  "open_pos": true,
+  "open_neg": false,
+  "tau_pos": 1.051,
+  "_alt_tau_pos_P50": 4.802
+ },
+ "atelectasis": {
+  "n": 42,
+  "base_in_scope": 0.405,
+  "open_pos": false,
+  "open_neg": false
+ },
+ "support_devices": {
+  "n": 27,
+  "base_in_scope": 0.37,
+  "open_pos": true,
+  "open_neg": true,
+  "tau_pos": 9.523,
+  "_alt_tau_pos_P50": 12.792,
+  "tau_neg": 3.664
+ }
+}
