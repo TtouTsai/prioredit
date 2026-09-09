@@ -8,15 +8,15 @@ one environment if your versions allow it.
 |---|---|---|
 | `PRIOREDIT_PY_MODEL` | model inference: Python 3.10, torch with CUDA matching your GPU | `probe_confidence.py`, `run_cxrmate.py`, `run_mlrg.sh`, `paper_chexbert_eval.py` |
 | `PRIOREDIT_PY_METRIC` | RadEval: Python 3.11 | `radeval_score.py`, `eval_stage2_radeval.py` |
-| `PRIOREDIT_PY_LABEL` | labeling / analysis: Python 3.10 | `chexpert_label.py`, `temporal_accuracy.py`, `train_direction_verifier.py`, `scripts/analysis/*` |
+| `PRIOREDIT_PY_LABEL` | labeling / analysis: Python 3.10 | `chexpert_label.py`, `temporal_assessment.py`, `train_direction_verifier.py`, `scripts/analysis/*` |
 
-All three default to `python`.
+All three default to `python`. Pinned package versions for each group are in `requirements.txt`.
 
 ## The Tier-A path needs almost nothing
 
 The self-contained reproduction in `docs/REPRODUCE.md` (TCA, the confusion matrices, the
-error accounting) uses only the standard library. `scripts/analysis/rebuttal_analysis.py` and
-`temporal_accuracy.py` run under a bare Python 3.10+ with no third-party packages.
+error accounting) uses only the standard library. `scripts/analysis/change_class_analysis.py` and
+`temporal_assessment.py` run under a bare Python 3.10+ with no third-party packages.
 
 ## Additional requirements by task
 

@@ -1,12 +1,13 @@
 #!/usr/bin/env python
-"""Rebuttal re-analyses (NEW file; imports shared temporal_accuracy, does not modify it).
+"""Change-class analyses for Appendix E: absolute-error accounting and the strict `new` subset.
 
-E3  absolute-error accounting: total temporal claims / correct / wrong / per-report, sw vs PriorEdit.
-E4  'new'-class strict analysis: new precision restricted to the subset where the prior EXPLICITLY
-    negates the finding (labeler prior==neg), and the composition of true-new (prior neg vs unmentioned).
+(a) Absolute-error accounting: total temporal claims / correct / wrong / per-report, for sw, PriorEdit
+    and the baselines.
+(b) Strict `new` analysis: new precision restricted to the subset where the prior EXPLICITLY negates the
+    finding (labeler prior == neg), plus the composition of true-new (prior negated vs merely unmentioned).
 
-Run (env rrg_dpo_new):
-  python scripts/rebuttal/rebuttal_analysis.py
+Reads the shipped labels and generation files only; imports the shared temporal_assessment metric.
+Env: bare Python 3.10+ (standard library); no GPU.
 """
 import os as _os, sys as _sys
 _here = _os.path.dirname(_os.path.abspath(__file__))
@@ -16,8 +17,7 @@ while _scripts != "/" and not _os.path.exists(_os.path.join(_scripts, "paths.py"
 _sys.path.insert(0, _scripts)
 import paths  # noqa: E402  (roots come from PRIOREDIT_* env vars; see scripts/paths.py)
 import json, os, sys, collections
-HERE = os.path.dirname(os.path.abspath(__file__))
-from temporal_accuracy import FIND, asserted_transitions, true_transitions  # shared, unchanged
+from temporal_assessment import FIND, asserted_transitions, true_transitions  # shared, unchanged
 
 RG = paths.LLMRG4
 PRIOR = json.load(open(os.path.join(paths.LABELS, "prior_chexpert_labels.json")))
@@ -46,7 +46,7 @@ def prior_state(i, f):
 
 
 print("=" * 78)
-print("E3  Absolute-error accounting (change classes new+resolved + persistent)")
+print("(a)  Absolute-error accounting (change classes new+resolved + persistent)")
 print("=" * 78)
 n_report = None
 for name in ["sw", "PriorEdit", "CXRMate", "MLRG"]:
@@ -72,7 +72,7 @@ for name in ["sw", "PriorEdit", "CXRMate", "MLRG"]:
 print()
 
 print("=" * 78)
-print("E4  'new'-class strict analysis")
+print("(b)  'new'-class strict analysis")
 print("=" * 78)
 # composition of true-new: prior explicitly negated vs merely unmentioned
 comp = collections.Counter()
@@ -87,7 +87,7 @@ print(f"true-new composition (n={tot_new}):")
 for st in ("neg", "none", "unc", "pos"):
     if comp[st]:
         print(f"  prior={st:5s}: {comp[st]:5d}  ({comp[st]/tot_new*100:.1f}%)")
-print("  -> 'prior=none' are merely-unmentioned (reviewer M9 concern); 'prior=neg' are clinically-clean new.")
+print("  -> 'prior=none' are merely-unmentioned; 'prior=neg' are clinically-clean new.")
 print()
 
 # new precision on the STRICT subset: only count asserted-new where prior==neg (explicitly negated)

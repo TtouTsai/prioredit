@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""GT-based temporal accuracy (direction-aware). Unlike temporal_halluc_* (which only checks a claim
+"""GT-based temporal change assessment (direction-aware). Unlike temporal_halluc_* (which only checks a claim
 against the PRIOR = grounding), this checks each temporal claim against the TRUE transition derived from
 (prior state, CURRENT-GT state), both from the official CheXpert labeler. This tests whether the
 temporal claims are CORRECT, not just prior-safe -- and it is NOT circular: the report's "current" comes
@@ -14,7 +14,7 @@ ASSERTED transition per finding: parse the generated report's comparison words b
 Reports per-category precision / recall / F1, plus a micro over the CHANGE classes {new, resolved}
 (the informative events; persistent is abundant and less diagnostic).
 
-  python temporal_accuracy.py --prior <prior official labels> --gt <gt official labels> \
+  python temporal_assessment.py --prior <prior official labels> --gt <gt official labels> \
       --preds name1:<report json> name2:<report json> ...
 """
 import os as _os, sys as _sys

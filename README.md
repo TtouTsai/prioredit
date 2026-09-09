@@ -5,7 +5,7 @@ Generators Hallucinate Temporal Change: A Direction-Aware Metric and a Decoupled
 
 Two contributions, both runnable here:
 
-* **TCA (Temporal Change Accuracy)** — a direction-aware, non-circular metric that scores the
+* **TCA (Temporal Change Assessment)** — a direction-aware, non-circular metric that scores the
   transition a report *asserts* against the *true* transition, obtained by labeling the prior and
   current ground-truth reports independently (paper §4).
 * **PriorEdit** — an image-only base drafts the findings, then a confidence-gated rule editor
@@ -20,7 +20,7 @@ enough to recompute every temporal number in the paper.
 ```bash
 export PRIOREDIT_ROOT=$PWD
 
-python scripts/metric/temporal_accuracy.py \
+python scripts/metric/temporal_assessment.py \
   --prior data/labels/prior_chexpert_labels.json \
   --gt    data/labels/gt_chexpert_labels.json \
   --preds PriorEdit:data/generations/prioredit.json \
@@ -30,8 +30,8 @@ python scripts/metric/temporal_accuracy.py \
           MLRG:data/generations/mlrg_withprior.json
 ```
 
-This prints Table 1's TCA columns and Table 4's confusion counts, on the 1337 studies with a real
-prior. Expected (paper Table 1):
+This prints Table 3's TCA columns and Table 6's confusion counts, on the 1337 studies with a real
+prior. Expected (paper Table 3):
 
 | method | change P | change R | new P | resolved P | persistent P | resolved TP |
 |---|---:|---:|---:|---:|---:|---:|
@@ -44,7 +44,7 @@ prior. Expected (paper Table 1):
 ## Repository layout
 
 ```
-configs/confidence_thresholds.json   per-finding calibration (paper App. C, Table 6)
+configs/confidence_thresholds.json   per-finding calibration (paper App. C, Table 5)
 data/labels/                         official CheXpert labeler states — the TCA ground truth
   prior_chexpert_labels.json           prior report state, 1337 with-prior studies
   gt_chexpert_labels.json              current GT report state, same studies
@@ -52,8 +52,8 @@ data/labels/                         official CheXpert labeler states — the TC
 data/generations/                    the generated reports every table is scored on
   prioredit.json                        PriorEdit (ours)
   llmrg4_sw.json / llmrg4_sn.json       LLM-RG4 with prior text / image-only base
-  cxrmate_withprior.json / _noprior     CXRMate, prior present / withheld (Table 2)
-  mlrg_withprior.json / _noprior        MLRG, prior present / withheld (Table 2)
+  cxrmate_withprior.json / _noprior     CXRMate, prior present / withheld (Table 1)
+  mlrg_withprior.json / _noprior        MLRG, prior present / withheld (Table 1)
 data/finding_confidence.json         cached confidence probe c_f(I), Eq. 1
 scripts/paths.py                     every filesystem root, from PRIOREDIT_* env vars
 scripts/metric/                      TCA + hallucination + presence/RaTE metrics
@@ -76,7 +76,9 @@ All roots come from environment variables, resolved in `scripts/paths.py`:
 | `PRIOREDIT_OUT` | regenerable outputs | `$PRIOREDIT_ROOT/out` |
 
 Development used three conda environments; set `PRIOREDIT_PY_MODEL`, `PRIOREDIT_PY_METRIC` and
-`PRIOREDIT_PY_LABEL` if yours are not the active interpreter. See `docs/ENVIRONMENTS.md`.
+`PRIOREDIT_PY_LABEL` if yours are not the active interpreter. Package versions are in
+`requirements.txt` (the Tier-A quick start above needs none); see `docs/ENVIRONMENTS.md` for the
+three-environment split.
 
 ## Data
 

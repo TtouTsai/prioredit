@@ -1,0 +1,27 @@
+# Python dependencies for the PriorEdit code release.
+#
+# The core reproduction -- the TCA metric, the rule editor, and the state extractor, i.e. the
+# Tier-A path in docs/REPRODUCE.md -- uses only the Python standard library and needs NOTHING
+# below. Install these only for the parts that need them.
+#
+# Development used three environments with conflicting pins (see docs/ENVIRONMENTS.md); the groups
+# below map to them. Versions are the ones we ran; loosen if your platform needs it. The CheXbert
+# model class and the LLM-RG4 backbone come from the LLM-RG4 checkout, not from pip.
+
+# --- analysis + neural-CheXbert scripts -------------------------------------------------------
+# scripts/analysis/{neural_chexbert_labels,bootstrap_presence_ci,llm_editor_ablation}.py,
+# scripts/method/calibrate.py, scripts/metric/paper_chexbert_eval.py
+numpy==1.26.4
+pandas==2.3.3
+# PyTorch: install the build that matches your CUDA/CPU from https://pytorch.org.
+# Any recent 2.x works for these scripts; we do not pin an exact build here.
+torch>=2.1
+
+# --- baselines + MS-CXR-T direction probe -----------------------------------------------------
+# scripts/baselines/run_cxrmate.py, scripts/direction_probe/*  (plus the released checkpoints)
+transformers==4.57.6
+torchvision>=0.16
+
+# --- report-quality metrics (separate env, Python 3.11) ---------------------------------------
+# scripts/metric/radeval_score.py
+radeval==2.2.1

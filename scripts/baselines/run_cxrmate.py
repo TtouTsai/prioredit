@@ -2,7 +2,7 @@
 """Run CXRMate (aehrc/cxrmate, longitudinal prior-report-conditioned) on our sw-test studies, to test
 whether a DIFFERENT architecture that feeds the prior report into generation also shows the temporal
 echo / hallucination. Feeds current frontal image + prior findings/impression (from swcmp last_finding /
-last_impression). Output: {id: findings_text}. Then score with temporal_halluc_official / temporal_accuracy.
+last_impression). Output: {id: findings_text}. Then score with temporal_halluc_official / temporal_assessment.
 
   llmrg4/bin/python run_cxrmate.py --ann <swcmp annotation.json> --out <json> [--with-prior-only]
 """

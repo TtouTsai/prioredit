@@ -1,13 +1,16 @@
 #!/usr/bin/env python
-"""E2 (reviewer M2): does the PriorEdit vs sw change-precision gap survive an INDEPENDENT prior labeler?
+"""Independent-labeler robustness (Appendix E): does the PriorEdit vs sw change-precision gap survive an
+INDEPENDENT prior labeler?
 
-The concern: TCA's prior state uses the official CheXpert RULE labeler, and PriorEdit's editor ext(R) is a
-regex aligned to that same CheXpert lexicon (93.8% agreement) -> shared oracle on the prior side.
-Test: recompute TCA's true transition with the prior (and/or GT) state taken from the NEURAL CheXbert
-model (smit2020) instead -- a different labeler the editor is NOT aligned to. Re-score all models with
-the unchanged scripts/temporal_accuracy.score(). If the gap holds, it is not a shared-oracle artifact.
+TCA's prior state uses the official CheXpert RULE labeler, and PriorEdit's editor ext(R) is a regex
+aligned to that same CheXpert lexicon (93.8% agreement), a shared oracle on the prior side. This
+recomputes TCA's true transition with the prior (and/or current-GT) state taken from the NEURAL CheXbert
+labeler (smit2020) instead -- a different labeler the editor is not aligned to -- and re-scores every
+model with the unchanged temporal_assessment.score(). The gap holds and in fact widens, so it is not a
+shared-oracle artifact.
 
-Env: rrg_dpo_new.  Neural labels precomputed (same as the paper's 92.9% noise-floor analysis).
+Neural labels are produced by scripts/analysis/neural_chexbert_labels.py; point PRIOREDIT_NEURAL_LABELS
+at them. Env: bare Python 3.10+ once the labels exist; no GPU.
 """
 import os as _os, sys as _sys
 _here = _os.path.dirname(_os.path.abspath(__file__))
@@ -17,7 +20,7 @@ while _scripts != "/" and not _os.path.exists(_os.path.join(_scripts, "paths.py"
 _sys.path.insert(0, _scripts)
 import paths  # noqa: E402  (roots come from PRIOREDIT_* env vars; see scripts/paths.py)
 import json, os, sys
-import temporal_accuracy as TA  # unchanged shared module
+import temporal_assessment as TA  # unchanged shared module
 
 RG = paths.LLMRG4
 # Neural-CheXbert labels are NOT shipped (regenerate: see docs/REPRODUCE.md, step "neural labels").

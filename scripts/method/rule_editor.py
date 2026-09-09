@@ -118,7 +118,6 @@ def confidence_state(greedy_draft, prior_text, conf, thresholds):
     return out
 
 
-from state_extractor import FIND_KW, NEG  # noqa: E402
 TAG = {"unchanged": "unchanged from prior", "new": "new from prior", "resolved": "now resolved",
        "increased": "increased from prior", "decreased": "decreased from prior"}
 
