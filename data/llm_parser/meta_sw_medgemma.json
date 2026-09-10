@@ -1,0 +1,28 @@
+{
+ "model": "symptoma/medgemma3:27b",
+ "digest": "27.0B|2026-09-10T15:00:57.463349203Z",
+ "temperature": 0,
+ "think": false,
+ "format": "json",
+ "seed": 0,
+ "n": 1337,
+ "system": "sw",
+ "prompt_sha256": "c27b0996b7644def",
+ "findings": [
+  "consolidation",
+  "edema",
+  "pleural_effusion",
+  "pneumonia",
+  "pneumothorax",
+  "cardiomegaly",
+  "enlarged_cardiomediastinum",
+  "lung_opacity",
+  "lung_lesion",
+  "atelectasis",
+  "pleural_other",
+  "fracture"
+ ],
+ "parse_fail": 0,
+ "sec_per_report": 1.319,
+ "timestamp": "2026-09-10T16:30:06"
+}

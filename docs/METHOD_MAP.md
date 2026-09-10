@@ -52,4 +52,5 @@ against the prior, TCA against the true transition (prior × current GT).
 | App. E, absolute-error accounting + strict `new` | `scripts/analysis/change_class_analysis.py` |
 | App. F, LLM-editor ablation (35.6% halluc / 13% change P) | `scripts/analysis/llm_editor_ablation.py` |
 | §6.2, independent-labeler robustness | `scripts/analysis/independent_labeler.py`, fed by `scripts/analysis/neural_chexbert_labels.py` (neural prior/GT labels) |
+| App. E, independent-parser robustness | `scripts/analysis/llm_parser_extract.py` (local Ollama LLM parser: Qwen3-30B-A3B, MedGemma-27B) + `scripts/analysis/llm_parser_eval.py`; text-free asserted-transition caches shipped in `data/llm_parser/` |
 | §6.2 / Table 3, presence bootstrap 95% CIs (both GT conventions) | `scripts/analysis/bootstrap_presence_ci.py` |
