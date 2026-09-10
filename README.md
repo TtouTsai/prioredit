@@ -44,24 +44,34 @@ prior. Expected (paper Table 3):
 ## Repository layout
 
 ```
-configs/confidence_thresholds.json   per-finding calibration (paper App. C, Table 5)
-data/labels/                         official CheXpert labeler states — the TCA ground truth
-  prior_chexpert_labels.json           prior report state, 1337 with-prior studies
-  gt_chexpert_labels.json              current GT report state, same studies
-  official_labels_by_hash.json         text-hash -> labels cache (labeler memoization)
-data/generations/                    the generated reports every table is scored on
-  prioredit.json                        PriorEdit (ours)
-  llmrg4_sw.json / llmrg4_sn.json       LLM-RG4 with prior text / image-only base
-  cxrmate_withprior.json / _noprior     CXRMate, prior present / withheld (Table 1)
-  mlrg_withprior.json / _noprior        MLRG, prior present / withheld (Table 1)
-data/finding_confidence.json         cached confidence probe c_f(I), Eq. 1
-scripts/paths.py                     every filesystem root, from PRIOREDIT_* env vars
-scripts/metric/                      TCA + hallucination + presence/RaTE metrics
-scripts/method/                      PriorEdit: state extractor, confidence probe, rule editor
-scripts/baselines/                   CXRMate and MLRG baseline generation
-scripts/direction_probe/             MS-CXR-T direction probe (App. D)
-scripts/analysis/                    robustness re-analyses and qualitative example selection
-docs/                                environments, data setup, per-claim reproduction map
+prioredit/
+├── configs/
+│   └── confidence_thresholds.json            per-finding calibration (App. C, Table 5)
+│
+├── data/
+│   ├── labels/                               official CheXpert states — the TCA ground truth
+│   │   ├── prior_chexpert_labels.json        prior report, 1337 with-prior studies
+│   │   ├── gt_chexpert_labels.json           current GT report, same studies
+│   │   └── official_labels_by_hash.json      text-hash → labels cache (memoization)
+│   ├── generations/                          the reports every table is scored on
+│   │   ├── prioredit.json                    PriorEdit (ours)
+│   │   ├── llmrg4_sw.json                    LLM-RG4 with prior text
+│   │   ├── llmrg4_sn.json                    LLM-RG4 image-only base
+│   │   ├── cxrmate_{withprior,noprior}.json  CXRMate, prior / withheld (Table 1)
+│   │   └── mlrg_{withprior,noprior}.json     MLRG, prior / withheld (Table 1)
+│   └── finding_confidence.json               cached confidence probe c_f(I), Eq. 1
+│
+├── scripts/
+│   ├── paths.py                              every filesystem root, from PRIOREDIT_* env vars
+│   ├── metric/                               TCA + hallucination + presence/RaTE metrics
+│   ├── method/                               state extractor, probe, calibration, rule editor
+│   ├── baselines/                            CXRMate and MLRG baseline generation
+│   ├── direction_probe/                      MS-CXR-T direction probe (App. D)
+│   └── analysis/                             bootstrap CIs, labeler robustness, ablations
+│
+├── docs/                                     environments, data setup, per-claim reproduction map
+├── requirements.txt                          pinned versions (the quick start above needs none)
+└── LICENSE
 ```
 
 ## Paths and environments
@@ -90,9 +100,10 @@ expected layout and where each resource comes from.
 
 ## Reproducing the rest of the paper
 
-`docs/REPRODUCE.md` maps each table, figure and headline number to the exact command, and states
-plainly which numbers are recomputable from this release and which require the model weights,
-the image corpus, or an analysis script that was not preserved.
+`docs/REPRODUCE.md` maps each table, figure and headline number to the exact command. Every
+reported statistic has a script here; where one needs an input we cannot redistribute (report
+text, model weights, the image corpus), the input is named and `docs/DATA.md` says how to
+rebuild it.
 
 ## Licence
 
