@@ -59,6 +59,10 @@ prioredit/
 │   │   ├── llmrg4_sn.json                    LLM-RG4 image-only base
 │   │   ├── cxrmate_{withprior,noprior}.json  CXRMate, prior / withheld (Table 1)
 │   │   └── mlrg_{withprior,noprior}.json     MLRG, prior / withheld (Table 1)
+│   ├── llm_parser/                           LLM-parser asserted transitions (App. E)
+│   │   ├── asserted_*_qwen3.json             Qwen3-30B-A3B re-extraction
+│   │   ├── asserted_*_medgemma.json          MedGemma-27B re-extraction
+│   │   └── meta_*.json                       model digest, temperature, parse-fail counts
 │   └── finding_confidence.json               cached confidence probe c_f(I), Eq. 1
 │
 ├── scripts/
@@ -67,7 +71,7 @@ prioredit/
 │   ├── method/                               state extractor, probe, calibration, rule editor
 │   ├── baselines/                            CXRMate and MLRG baseline generation
 │   ├── direction_probe/                      MS-CXR-T direction probe (App. D)
-│   └── analysis/                             bootstrap CIs, labeler robustness, ablations
+│   └── analysis/                             bootstrap CIs, labeler + parser robustness, ablations
 │
 ├── docs/                                     environments, data setup, per-claim reproduction map
 ├── requirements.txt                          pinned versions (the quick start above needs none)
