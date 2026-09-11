@@ -178,9 +178,11 @@ def edit_inplace(prior_text, draft, cur_states=None, high_conf=False, sev_jump=2
     # which EDIT_FINDINGS each draft sentence mentions (regex, only for PLACEMENT of the temporal tag)
     sent_finds = [{fd for fd in EDIT_FINDINGS if extract(s)[fd][0] in ("pos", "neg")} for s in sents]
     done, appended = set(), []
-    # for each finding the draft STATES: attach the temporal tag IN-PLACE onto the draft sentence when that
-    # sentence mentions only this finding (natural, no duplication); otherwise (multi-finding sentence ->
-    # ambiguous attribution) emit a separate finding-bound sentence so the claim stays unambiguous.
+    # for each finding the draft STATES: attach the temporal tag onto the draft sentence in place when that
+    # sentence mentions only this finding; the tag NAMES the finding ("{name} is {tag}") so the temporal claim
+    # is self-identifying. A finding sharing its sentence with others (ambiguous attribution) or spread over
+    # several sentences becomes its own finding-bound sentence. Either way each temporal claim lives in a
+    # single-finding clause, so the metric parser never has to split a change across co-located findings.
     for fd in EDIT_FINDINGS:
         if cbody[fd][0] == "none":
             continue
@@ -189,10 +191,10 @@ def edit_inplace(prior_text, draft, cur_states=None, high_conf=False, sev_jump=2
         if not tag:
             continue
         idxs = [i for i, sf in enumerate(sent_finds) if fd in sf]
-        if len(idxs) == 1 and sent_finds[idxs[0]] == {fd}:          # in-place rewrite
-            sents[idxs[0]] = f"{sents[idxs[0]]}, {TAG[tag]}"
-        else:                                                       # ambiguous -> own sentence
-            appended.append(f"{NAME[fd]} {TAG[tag]}")
+        if len(idxs) == 1 and sent_finds[idxs[0]] == {fd}:          # sole finding in its sentence -> in-place, NAMED
+            sents[idxs[0]] = f"{sents[idxs[0]]}, {NAME[fd]} is {TAG[tag]}"
+        else:                                                       # ambiguous -> own finding-bound sentence
+            appended.append(f"{NAME[fd]} is {TAG[tag]}")
     # coverage fill for findings the draft is SILENT on (prior=pos):
     #   cur_states=='pos' -> recovered persistent (greedy miss)   -> "there is {name} unchanged"
     #   cur_states=='neg' -> confident current absence (tau_neg)  -> "no {name}, now resolved"
