@@ -130,7 +130,7 @@ These numbers are recomputed from shipped inputs. Most now have a preserved scri
 
 | paper number | how to recompute |
 |---|---|
-| Presence bootstrap 95% CIs — §6.2, Table 3 note (PriorEdit−`sw` +0.22 CI [−0.79,+1.23]; PriorEdit−`sn` +1.11 CI [+0.69,+1.52]) | `scripts/analysis/bootstrap_presence_ci.py --canonical PriorEdit:<dir> sw:<dir> sn:<dir>` (study-level bootstrap, B=2000, CheXbert-14 micro-F1, n=1698) |
+| Presence bootstrap 95% CIs — §6.2, Table 3 note (PriorEdit−`sw` +0.37 CI [−0.67,+1.40]; PriorEdit−`sn` +1.25 CI [+0.80,+1.69]) | `scripts/analysis/bootstrap_presence_ci.py --canonical PriorEdit:<dir> sw:<dir> sn:<dir>` (study-level bootstrap, B=2000, CheXbert-14 micro-F1, n=1698) |
 | Original-GT split presence — §6.2 (59.23 vs 60.94, −1.71 CI [−2.75,−0.69], n=1576) | same script, `--orig PriorEdit:<dir> sw:<dir>` (against the original MIMIC-CXR GT) |
 | Paired change-precision CI — §6.2 (+15.5 CI [+7.6,+22.8]) and persistent (+19.2 CI [+16.3,+22.2]) | paired study-level bootstrap, B=2000, resampling the 1337 with-prior studies and rescoring both systems with `temporal_assessment.score()` on each resample |
 | Two-labeler-agreement subset — §6.2 (92.9% agreement; PriorEdit 44% vs `sw` 28%, 124 vs 1 resolved) | `scripts/analysis/neural_chexbert_labels.py` writes the neural prior/GT labels; `scripts/analysis/independent_labeler.py` restricts `temporal_assessment.score()` to the agreement subset (point `PRIOREDIT_NEURAL_LABELS` at them) |
