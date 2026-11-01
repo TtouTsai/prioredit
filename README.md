@@ -1,7 +1,11 @@
 # PriorEdit — Prior-Conditioned Report Generators Hallucinate Temporal Change
 
-Code and evaluation artifacts for the ML4H 2026 submission *“Prior-Conditioned Report
-Generators Hallucinate Temporal Change: A Direction-Aware Metric and a Decoupled Remedy.”*
+Code and evaluation artifacts for *"Prior-Conditioned Report Generators Hallucinate Temporal
+Change: A Direction-Aware Metric and a Decoupled Remedy,"* published in the Proceedings of
+Machine Learning for Health (ML4H) 2026.
+
+Authors: Yan-Hong Chen, Yun-Chieh Tsai, Po-Chih Kuo
+
 
 Two contributions, both runnable here:
 
@@ -111,5 +115,5 @@ rebuild it.
 
 ## Licence
 
-Code is released for review under the MIT licence (`LICENSE`). The datasets and the third-party
+Code is released under the MIT licence (`LICENSE`). The datasets and the third-party
 checkpoints (LLM-RG4, CXRMate, MLRG, CheXbert, CXR-BERT) keep their original licences.

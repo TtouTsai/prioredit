@@ -10,7 +10,7 @@ Uncertain (-1) is treated as present for present_req (benefit of the doubt, matc
 
 Prior labels come from chexpert_label.py output {id: {finding: pos|neg|unc|none}}.
 
-Run (env rrg_dpo_new):
+Run (see docs/ENVIRONMENTS.md):
   python temporal_halluc_official.py --pred <report json> --ann <sw ann> --prior_labels <labels json> --name X
 """
 import os as _os, sys as _sys

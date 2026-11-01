@@ -15,7 +15,7 @@ Resampling fusion (--samples samples.json {id:[N drafts]}, --fuse):
   median  : denoise severity -- take the median severity level across mentioning sources, build one clean
             "{sev} {finding}" current_ctx, 1 call. Attacks the "image-only severity is noisy" bottleneck.
 
-Run (env rrg_dpo_new):
+Run (see docs/ENVIRONMENTS.md):
   python predict_direction_mscxrt.py --current <drafts.json> --samples <samples.json> --fuse vote --name X
 """
 import os as _os, sys as _sys

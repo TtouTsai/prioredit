@@ -6,7 +6,7 @@ Silver labels from build_direction_trainset.py; class-weighted CE handles the wo
 masked half of the data forces the model to read severity, not comparison words (deployment drafts have
 none). Saves best-macro-F1 checkpoint.
 
-Run (env rrg_dpo_new): python train_direction_verifier.py --epochs 4
+Run (see docs/ENVIRONMENTS.md): python train_direction_verifier.py --epochs 4
 """
 import os as _os, sys as _sys
 _here = _os.path.dirname(_os.path.abspath(__file__))
