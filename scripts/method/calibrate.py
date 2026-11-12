@@ -1,15 +1,15 @@
 #!/usr/bin/env python
-"""Per-finding confidence calibration (paper App. C, Table 5) -> configs/confidence_thresholds.json.
+"""Per-finding confidence calibration (paper App. C, Table 6) -> configs/confidence_thresholds.json.
 
-For each candidate finding, fit a logistic  P(y=1 | c) = sigma(a_f * c + b_f)  on the Eq. 3 coverage
+For each candidate finding, fit a logistic  P(y=1 | c) = sigma(a_f * c + b_f)  on the Eq. 2 coverage
 scope of the sw VALIDATION split -- prior present AND the image-only draft silent -- then invert it
-(Eq. 2) to the operating thresholds:
+(Eq. 3) to the operating thresholds:
 
     tau_pos = (logit(base_f)   - b_f) / a_f      adopted positive-coverage threshold (P* = base_f)
     tau_neg = (logit(base_f/2) - b_f) / a_f      resolved (negative) branch        (P* = base_f/2)
 
 and also the alternative P*=0.5 point reported (not adopted) in App. F. The label y is the
-current-presence truth from neural CheXbert over the current-GT report text. Prints the Table 5 view
+current-presence truth from neural CheXbert over the current-GT report text. Prints the Table 6 view
 (n, base, a_f, b_f, tau_pos, tau_neg) and writes the adopted thresholds config.
 
 Inputs are the VALIDATION split and are NOT redistributed (regenerate under your own PhysioNet DUA):
@@ -124,7 +124,7 @@ def main():
     print(f"validation calibration, {len(ids)} studies; scope = prior present AND draft silent\n")
     print(f"{'finding':16s}{'n':>5}{'base':>7}{'a_f':>8}{'b_f':>8}{'tau_pos':>9}{'tau_neg':>9}  open")
     cfg = {"_meta": {
-        "scope": "prior present AND draft silent (the Eq. 3 coverage scope)",
+        "scope": "prior present AND draft silent (the Eq. 2 coverage scope)",
         "calib": f"fitted on the sw validation split, {len(ids)} studies",
         "pos_rule": "tau_pos = confidence at P(pos|c) = base_in_scope; looser than P=0.5, so more "
                     "persistent findings are covered and tagged 'unchanged'",
@@ -134,7 +134,7 @@ def main():
                   "alternative operating point at P=0.5, reported in App. F, not adopted",
         "closed": f"findings with < {MIN_PAIRS} clean in-scope pairs are omitted (pleural effusion, "
                   "consolidation): too few validation pairs (App. C)",
-        "paper": "Table 5, App. C",
+        "paper": "Table 6, App. C",
     }}
     for f in COND2NAME:
         xs, ys = [], []

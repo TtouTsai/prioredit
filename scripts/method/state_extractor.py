@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Per-finding state extractor ext(.)_f -- paper Sec. 3.1 and App. B.
+"""Per-finding state extractor ext(.)_f -- paper Sec. 6.1 and App. B.
 
 Reads a report and returns, per finding, one of {pos, neg, none} = present / explicitly absent /
 unmentioned. For the five MS-CXR-T findings the mention lexicon is aligned to the official Stanford

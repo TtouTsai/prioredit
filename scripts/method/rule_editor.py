@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-"""PriorEdit's rule editor -- paper Sec. 3.2, Eq. 3.
+"""PriorEdit's rule editor -- paper Sec. 6.2, Eq. 2.
 
 Given the prior report text and the image-only draft, decide each finding's current state and
 attach a prior-grounded temporal tag. The prior is consulted only here; it never enters the
 generator.
 
-  confidence_state()  Eq. 3. The draft is authoritative where explicit; where the draft is silent
+  confidence_state()  Eq. 2. The draft is authoritative where explicit; where the draft is silent
                       and the prior reports the finding present, the calibrated confidence
                       c_f(I) decides recover (pos, c >= tau_pos) / resolved (neg, c <= tau_neg) /
                       abstain (none).

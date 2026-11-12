@@ -13,9 +13,9 @@ _sys.path.insert(0, _scripts)
 import paths  # noqa: E402  (roots come from PRIOREDIT_* env vars; see scripts/paths.py)
 import os, json, argparse, subprocess
 
-RADEVAL = os.path.join(paths.SCRIPTS, "radeval_score.py")
+RADEVAL = os.path.join(paths.SCRIPTS, "metric", "radeval_score.py")
 METRICEVAL_PY = paths.PY_METRIC
-EVAL_ROOT = paths.LABELS
+EVAL_ROOT = os.path.join(paths.OUT, "eval")  # holds report text: keep out of data/ (DUA)
 
 
 def main():

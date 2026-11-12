@@ -24,6 +24,7 @@ own source under its own terms.
 | **Chest ImaGenome** | PhysioNet | region-level analyses only; not needed for any paper number |
 | **LLM-RG4** checkout + checkpoint | the authors' release | the image-only base model (`sn`) |
 | **CXRMate** (`aehrc/cxrmate`), **MLRG** (`MK-runner/MLRG`) | Hugging Face | baseline generations |
+| **Qwen3-VL-2B-RRG-SFT** (`dmusingu/Qwen3-VL-2B-RRG-SFT`) | Hugging Face | the second image-only base (App. F, Table 8) |
 | **CheXbert** checkpoint, **CXR-BERT** (`BiomedVLP-CXR-BERT-specialized`) | as published | presence metric; direction probe |
 | **CheXpert labeler** (dockerized) | `stanfordmlgroup/chexpert-labeler` | the authoritative rule labeler behind TCA |
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""LLM-editor ablation (paper App. F / §7): is decoupling, or just 'rewrite with a model', what helps?
+"""LLM-editor ablation (paper App. F / §8): is decoupling, or just 'rewrite with a model', what helps?
 
 Uses the SAME backbone as PriorEdit's base (LLM-RG4's LoRA Vicuna-7B) as a pure TEXT rewriter: feed the
 image-only sn draft plus the prior report text and instruct it to add temporal comparison sentences,

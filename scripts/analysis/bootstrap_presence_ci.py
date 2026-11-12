@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Study-level bootstrap 95% CIs for presence (CheXbert-14 micro-F1) and the system differences (paper
-Table 3 / §6.2). Labels each system's generated report and its ground truth with neural CheXbert, forms
+Table 2, §7 and App. C). Labels each system's generated report and its ground truth with neural CheXbert, forms
 a per-study 14-vector, and resamples studies (B=2000) to get each system's F1 CI and the paired
 PriorEdit-minus-baseline difference CI.
 

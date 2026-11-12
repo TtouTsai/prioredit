@@ -11,10 +11,10 @@ Two contributions, both runnable here:
 
 * **TCA (Temporal Change Assessment)** — a direction-aware, non-circular metric that scores the
   transition a report *asserts* against the *true* transition, obtained by labeling the prior and
-  current ground-truth reports independently (paper §4).
+  current ground-truth reports independently (paper §3).
 * **PriorEdit** — an image-only base drafts the findings, then a confidence-gated rule editor
   consults the prior text only to ground each temporal tag. The prior never enters the
-  generator (paper §3).
+  generator (paper §6).
 
 ## Quick start: reproduce the main temporal result
 
@@ -34,8 +34,8 @@ python scripts/metric/temporal_assessment.py \
           MLRG:data/generations/mlrg_withprior.json
 ```
 
-This prints Table 3's TCA columns and Table 6's confusion counts, on the 1337 studies with a real
-prior. Expected (paper Table 3):
+This prints Table 2's TCA columns and Table 7's confusion counts, on the 1337 studies with a real
+prior. Expected (paper Table 2):
 
 | method | change P | change R | new P | resolved P | persistent P | resolved TP |
 |---|---:|---:|---:|---:|---:|---:|
@@ -50,7 +50,7 @@ prior. Expected (paper Table 3):
 ```
 prioredit/
 ├── configs/
-│   └── confidence_thresholds.json            per-finding calibration (App. C, Table 5)
+│   └── confidence_thresholds.json            per-finding calibration (App. C, Table 6)
 │
 ├── data/
 │   ├── labels/                               official CheXpert states — the TCA ground truth
@@ -62,7 +62,8 @@ prioredit/
 │   │   ├── llmrg4_sw.json                    LLM-RG4 with prior text
 │   │   ├── llmrg4_sn.json                    LLM-RG4 image-only base
 │   │   ├── cxrmate_{withprior,noprior}.json  CXRMate, prior / withheld (Table 1)
-│   │   └── mlrg_{withprior,noprior}.json     MLRG, prior / withheld (Table 1)
+│   │   ├── mlrg_{withprior,noprior}.json     MLRG, prior / withheld (Table 1)
+│   │   └── qwen3vl_imageonly.json            Qwen3-VL-2B image-only base (App. F, Table 8)
 │   ├── llm_parser/                           LLM-parser asserted transitions (App. E)
 │   │   ├── asserted_*_qwen3.json             Qwen3-30B-A3B re-extraction
 │   │   ├── asserted_*_medgemma.json          MedGemma-27B re-extraction
@@ -73,9 +74,9 @@ prioredit/
 │   ├── paths.py                              every filesystem root, from PRIOREDIT_* env vars
 │   ├── metric/                               TCA + hallucination + presence/RaTE metrics
 │   ├── method/                               state extractor, probe, calibration, rule editor
-│   ├── baselines/                            CXRMate and MLRG baseline generation
+│   ├── baselines/                            CXRMate, MLRG and Qwen3-VL-2B generation
 │   ├── direction_probe/                      MS-CXR-T direction probe (App. D)
-│   └── analysis/                             bootstrap CIs, labeler + parser robustness, ablations
+│   └── analysis/                             bootstrap CIs, robustness, error directions, ablations
 │
 ├── docs/                                     environments, data setup, per-claim reproduction map
 ├── requirements.txt                          pinned versions (the quick start above needs none)
@@ -116,4 +117,5 @@ rebuild it.
 ## Licence
 
 Code is released under the MIT licence (`LICENSE`). The datasets and the third-party
-checkpoints (LLM-RG4, CXRMate, MLRG, CheXbert, CXR-BERT) keep their original licences.
+checkpoints (LLM-RG4, CXRMate, MLRG, Qwen3-VL-2B-RRG-SFT, CheXbert, CXR-BERT) keep their original
+licences.

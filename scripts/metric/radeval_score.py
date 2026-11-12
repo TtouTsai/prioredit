@@ -40,7 +40,7 @@ def main():
               f"CheXbert-14: micro {out.get('f1chexbert_all_micro_f1',0):.4f} macro {out.get('f1chexbert_all_macro_f1',0):.4f} | "
               f"CheXbert-5: micro {out.get('f1chexbert_5_micro_f1',0):.4f} macro {out.get('f1chexbert_5_macro_f1',0):.4f} | "
               f"RaTE {out.get('ratescore',0):.4f} | Temporal-F1 {out.get('temporal_f1',0):.4f}", flush=True)
-    out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data")
+    out_dir = paths.OUT  # regenerable output (gitignored), not the source tree
     os.makedirs(out_dir, exist_ok=True)
     json.dump(rows, open(os.path.join(out_dir, "radeval_results.json"), "w"), indent=1)
 
