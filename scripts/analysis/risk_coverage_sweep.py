@@ -8,9 +8,9 @@ points in configs/confidence_thresholds.json (tau_pos at P*=base_in_scope and _a
 P*=0.5), so no GPU or re-calibration is needed. The point is that admitting more coverage (lower P*)
 raises the 'unchanged' volume without moving change-class precision.
 
-Pure CPU. Inputs other than the shipped labels/config are the sn draft, the annotation, and the cached
-confidence probe; they live in the LLM-RG4 checkout (report text is MIMIC-CXR under a PhysioNet DUA and
-is not redistributed here). Baselines are single reference points.
+Pure CPU. The sn draft, the sw generations and the cached confidence probe are shipped
+(data/generations/, data/finding_confidence.json). Only the annotation (prior report text, MIMIC-CXR under
+a PhysioNet DUA, not redistributed) comes from the LLM-RG4 checkout. Baselines are single reference points.
 """
 import os as _os, sys as _sys
 _here = _os.path.dirname(_os.path.abspath(__file__))
@@ -68,10 +68,10 @@ def main():
     ap.add_argument("--prior", default=os.path.join(paths.LABELS, "prior_chexpert_labels.json"))
     ap.add_argument("--gt", default=os.path.join(paths.LABELS, "gt_chexpert_labels.json"))
     ap.add_argument("--config", default=os.path.join(paths.CONFIGS, "confidence_thresholds.json"))
-    ap.add_argument("--drafts", default=f"{RG}/save/swcmp_sn_off/result/test_result.json")
+    ap.add_argument("--drafts", default=os.path.join(paths.GENERATIONS, "llmrg4_sn.json"))
     ap.add_argument("--ann", default=f"{RG}/data/swcmp/annotation.json")
-    ap.add_argument("--conf", default=f"{RG}/save/conf_probe/result/finding_confidence.json")
-    ap.add_argument("--sw", default=f"{RG}/save/swcmp_sw_off/result/test_result.json",
+    ap.add_argument("--conf", default=os.path.join(paths.ROOT, "data", "finding_confidence.json"))
+    ap.add_argument("--sw", default=os.path.join(paths.GENERATIONS, "llmrg4_sw.json"),
                     help="sw generations, for the reference point")
     ap.add_argument("--grid", default="0.15,0.2,0.281,0.3,0.4,0.5,0.6,0.7,0.8")
     ap.add_argument("--out", default=os.path.join(paths.OUT, "risk_coverage"))

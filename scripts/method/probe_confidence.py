@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Per-finding pos/neg confidence probe (Option C), WITHOUT touching LLM-RG4 paper code.
+"""Per-finding pos/neg confidence probe c_f(I) (paper Eq. 1), WITHOUT touching LLM-RG4 code.
 
 Imports the frozen LLM_RG4 model as a library and drives a manual test loop. For each study it wraps the
 current image exactly as the sn path does (encode_APPA_img -> zero-pad 8192 -> iit_proj/layernorm ->
@@ -8,7 +8,9 @@ prompt_sn -> append BOS), then teacher-force-scores two parallel templates that 
 confidence[finding] = sum_logP(pos) - sum_logP(neg)   (>0 => model leans positive)
 
 Dumps {study_id: {finding: confidence}} to <savedmodel_path>/result/finding_confidence.json.
-Run inside the llmrg4 env with CUDA_VISIBLE_DEVICES set. Args mirror run_stage2_infer.sh.
+Run in the LLM-RG4 environment ($PRIOREDIT_PY_MODEL) with CUDA_VISIBLE_DEVICES set. Arguments mirror
+LLM-RG4's own test entry point. The script changes into $PRIOREDIT_LLMRG4 at import, so pass an
+absolute --save path.
 """
 import os as _os, sys as _sys
 _here = _os.path.dirname(_os.path.abspath(__file__))

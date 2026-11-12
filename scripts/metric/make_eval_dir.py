@@ -23,7 +23,7 @@ import os, csv, json, argparse
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--pred", required=True, help="generation json {study_id: report}")
+    ap.add_argument("--pred", required=True, help="generation json {id: report}")
     ap.add_argument("--ann", required=True, help="LLM-RG4 swcmp annotation.json")
     ap.add_argument("--out", required=True, help="eval dir to create")
     ap.add_argument("--with_prior", action="store_true", help="restrict to the 1337 with-prior studies")

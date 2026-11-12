@@ -19,7 +19,9 @@ Two contributions, both runnable here:
 ## Quick start: reproduce the main temporal result
 
 No GPU, no model weights, and no image data are needed — the released generations and labels are
-enough to recompute every temporal number in the paper.
+enough to recompute the main temporal results: the TCA columns of Table 2, Tables 1 (temporal
+hallucination), 4, 7, 9 and 10, the Change column of Table 8, the strict change classes, and the
+LLM-parser robustness gaps (see `docs/REPRODUCE.md`).
 
 ```bash
 export PRIOREDIT_ROOT=$PWD
@@ -34,8 +36,8 @@ python scripts/metric/temporal_assessment.py \
           MLRG:data/generations/mlrg_withprior.json
 ```
 
-This prints Table 2's TCA columns and Table 7's confusion counts, on the 1337 studies with a real
-prior. Expected (paper Table 2):
+This prints Table 2's TCA columns, on the 1337 studies with a real prior (the full confusion
+matrices of Table 7 come from `scripts/analysis/error_directions.py`). Expected (paper Table 2):
 
 | method | change P | change R | new P | resolved P | persistent P | resolved TP |
 |---|---:|---:|---:|---:|---:|---:|
@@ -103,16 +105,16 @@ three-environment split.
 
 **No patient data is redistributed here.** MIMIC-CXR requires a PhysioNet credentialed Data Use
 Agreement; MIMIC-RG4, MS-CXR-T and Chest ImaGenome come from their own authors. The shipped
-`data/labels/` files contain only 14-way CheXpert *label states* keyed by study id — no report
-text — and `data/generations/` contains only model-*generated* text. See `docs/DATA.md` for the
+`data/labels/` files contain only CheXpert *label states* (13 findings, the 14 CheXpert classes
+without No Finding) keyed by the image id of the LLM-RG4 annotation — no report text — and `data/generations/` contains only model-*generated* text. See `docs/DATA.md` for the
 expected layout and where each resource comes from.
 
 ## Reproducing the rest of the paper
 
-`docs/REPRODUCE.md` maps each table, figure and headline number to the exact command. Every
-reported statistic has a script here; where one needs an input we cannot redistribute (report
-text, model weights, the image corpus), the input is named and `docs/DATA.md` says how to
-rebuild it.
+`docs/REPRODUCE.md` maps each table, figure and headline number to the command that produces it.
+Where a number needs an input we cannot redistribute (report text, model weights, the image
+corpus), the input is named and `docs/DATA.md` says where to obtain it. The few numbers without a
+dedicated script are marked there, with the computation spelled out.
 
 ## Licence
 

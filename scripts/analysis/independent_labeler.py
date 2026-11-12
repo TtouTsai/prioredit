@@ -23,7 +23,7 @@ import json, os, sys
 import temporal_assessment as TA  # unchanged shared module
 
 RG = paths.LLMRG4
-# Neural-CheXbert labels are NOT shipped (regenerate: see docs/REPRODUCE.md, step "neural labels").
+# Neural-CheXbert labels are NOT shipped (regenerate with scripts/analysis/neural_chexbert_labels.py).
 TMP = os.environ.get("PRIOREDIT_NEURAL_LABELS", os.path.join(paths.OUT, "neural_labels"))
 
 OFF_PRIOR = json.load(open(os.path.join(paths.LABELS, "prior_chexpert_labels.json")))  # 1337 with-prior
@@ -61,5 +61,5 @@ for title, prior, gt in CONFIGS:
         print(f"  {name:10s} change P={cp*100:4.0f}% R={cr*100:4.0f}%  resolved-P={rp*100:3.0f}%  "
               f"(change tp={ctp}/{cpred}, n_studies={n})")
     gap = (res['PriorEdit'][0] - res['sw'][0]) * 100
-    print(f"  --> PriorEdit - sw change-precision gap = {gap:+.0f} points")
+    print(f"  --> PriorEdit - sw change-precision gap = {gap:+.1f} points")
     print()

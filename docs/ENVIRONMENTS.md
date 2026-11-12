@@ -6,9 +6,9 @@ one environment if your versions allow it.
 
 | variable | environment | used by |
 |---|---|---|
-| `PRIOREDIT_PY_MODEL` | model inference: Python 3.10, torch with CUDA matching your GPU | `probe_confidence.py`, `run_cxrmate.py`, `run_mlrg.sh`, `paper_chexbert_eval.py` |
-| `PRIOREDIT_PY_METRIC` | RadEval: Python 3.11 | `radeval_score.py`, `eval_stage2_radeval.py` |
-| `PRIOREDIT_PY_LABEL` | labeling / analysis: Python 3.10 | `chexpert_label.py`, `temporal_assessment.py`, `temporal_halluc_official.py`, `train_direction_verifier.py`, `predict_direction_mscxrt.py`, `scripts/analysis/*` |
+| `PRIOREDIT_PY_MODEL` | model inference: Python 3.10, torch with CUDA matching your GPU | `probe_confidence.py`, `run_cxrmate.py`, `run_mlrg.sh`, `run_qwen3vl.py`, `paper_chexbert_eval.py`, and the scripts that import LLM-RG4 code: `calibrate.py`, `bootstrap_presence_ci.py`, `neural_chexbert_labels.py`, `llm_editor_ablation.py`, `temporal_halluc_indep.py` |
+| `PRIOREDIT_PY_METRIC` | RadEval: Python 3.11 | `radeval_score.py`, `eval_stage2_radeval.py`, `imageonly_bases_rate.py` (needs `RaTEScore`) |
+| `PRIOREDIT_PY_LABEL` | labeling / analysis: Python 3.10 | `chexpert_label.py`, `temporal_assessment.py`, `temporal_halluc_official.py`, `train_direction_verifier.py`, `predict_direction_mscxrt.py`, the remaining `scripts/analysis/*` |
 
 All three default to `python`. Pinned package versions for each group are in `requirements.txt`.
 

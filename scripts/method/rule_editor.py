@@ -93,7 +93,7 @@ def confidence_state(greedy_draft, prior_text, conf, thresholds):
       else -> none.
     Findings the prior does not state positive stay none (no temporal basis). Note: prior=neg + draft
     silent (would give 'new') was tried and dropped -- it barely moved temporal (+0.006) but raised
-    hallucination, because prior-absent findings rarely actually appear now (see docs)."""
+    hallucination, because prior-absent findings rarely actually appear now."""
     g = _EXTRACT(greedy_draft)
     p = _EXTRACT(prior_text)
     conf = conf or {}
@@ -246,7 +246,7 @@ def main():
     ap.add_argument("--sev_jump", type=int, default=2, help="min severity-level jump to assert increased/decreased")
     ap.add_argument("--keep_unchanged", action="store_true", help="keep presence-grounded 'unchanged' for persistent findings (Temporal-F1)")
     ap.add_argument("--official", action="store_true", help="use official CheXpert labeler for state (severity still from SEV lexicon)")
-    ap.add_argument("--confidence", help="per-finding confidence json {id:{finding:logP(pos)-logP(neg)}} -> scope-A coverage (replaces resampling vote)")
+    ap.add_argument("--confidence", help="per-finding confidence json {id:{finding:logP(pos)-logP(neg)}} -> confidence coverage, Eq. 2 (replaces resampling vote)")
     ap.add_argument("--thresholds", help="per-finding threshold json (configs/confidence_thresholds.json)")
     a = ap.parse_args()
     if a.official:
@@ -267,7 +267,7 @@ def main():
     for sid, d in drafts.items():
         dt = d[0] if isinstance(d, list) else d
         cur = None
-        if conf_map is not None and str(sid) in conf_map:        # scope-A confidence coverage
+        if conf_map is not None and str(sid) in conf_map:        # confidence coverage (Eq. 2)
             cur = confidence_state(dt, priors.get(str(sid), ""), conf_map[str(sid)], thresholds)
         elif samples is not None and str(sid) in samples:
             cur = union_state(dt, samples[str(sid)], k=a.vote_k)  # greedy-authoritative + threshold fill
@@ -279,6 +279,7 @@ def main():
         out[sid] = e
         if e != dt:
             n_edited += 1
+    os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
     json.dump(out, open(a.out, "w"))
     print(f"edited {n_edited}/{len(out)} drafts -> {a.out}")
 

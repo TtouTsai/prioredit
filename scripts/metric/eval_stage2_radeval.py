@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-"""Convert an LLM-RG4-flag test output dir (result/test_result.json = hypo, test_refs.json = ref) into
-pred.csv/gt.csv ('Report Impression' column) and run the shared RadEval. Worktree-local paths.
+"""Convert an LLM-RG4 inference output dir (result/test_result.json = hypotheses, test_refs.json =
+references) into pred.csv/gt.csv ('Report Impression' column) under $PRIOREDIT_OUT/eval/<name>, and
+optionally run radeval_score.py on it (RadEval env, $PRIOREDIT_PY_METRIC).
 
   python eval_stage2_radeval.py --infer_dir <savepath> --name <eval_name> [--run]
 """
@@ -22,7 +23,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--infer_dir", required=True, help="savepath containing result/test_result.json")
     ap.add_argument("--name", required=True, help="eval dir name")
-    ap.add_argument("--run", action="store_true", help="also invoke RadEval (env metriceval)")
+    ap.add_argument("--run", action="store_true", help="also run radeval_score.py ($PRIOREDIT_PY_METRIC)")
     args = ap.parse_args()
     import pandas as pd
     rf = os.path.join(args.infer_dir, "result")
@@ -41,7 +42,7 @@ def main():
         subprocess.run([METRICEVAL_PY, RADEVAL, ed], cwd="/tmp",
                        env=dict(os.environ, PYTHONSAFEPATH="1"), check=True)
     else:
-        print(f"next (env metriceval): PYTHONSAFEPATH=1 {METRICEVAL_PY} {RADEVAL} {ed}")
+        print(f"next (RadEval env): PYTHONSAFEPATH=1 {METRICEVAL_PY} {RADEVAL} {ed}")
 
 
 if __name__ == "__main__":

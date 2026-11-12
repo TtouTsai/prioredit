@@ -18,7 +18,7 @@ while _scripts != "/" and not _os.path.exists(_os.path.join(_scripts, "paths.py"
     _scripts = _os.path.dirname(_scripts)
 _sys.path.insert(0, _scripts)
 import paths  # noqa: E402  (roots come from PRIOREDIT_* env vars; see scripts/paths.py)
-import json, argparse, collections
+import os, json, argparse, collections
 MANIFEST = os.path.join(paths.OUT, "mscxrt/manifest.jsonl")
 FINDINGS = ["consolidation", "edema", "pleural_effusion", "pneumonia", "pneumothorax"]
 CLASSES = ["improving", "stable", "worsening"]

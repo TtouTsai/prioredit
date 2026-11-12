@@ -60,7 +60,7 @@ def main():
                     help="restrict to studies with a real prior (its keys)")
     ap.add_argument("--delta", default=f"{RG}/save/llmrg4_mimiccxr_findingonly.pth")
     ap.add_argument("--images", default=os.environ.get(
-        "PRIOREDIT_MIMIC_JPG", os.path.join(paths.DATA, "mimic-cxr-jpg", "2.0.0", "files") + "/"))
+        "PRIOREDIT_MIMIC_JPG", os.path.join(paths.DATA, "mimic-cxr-jpg", "files") + "/"))
     ap.add_argument("--out", default=os.path.join(paths.OUT, "llm_editor", "llm_editor_reports.json"))
     a = ap.parse_args()
     os.makedirs(os.path.dirname(a.out), exist_ok=True)

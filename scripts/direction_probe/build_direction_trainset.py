@@ -13,7 +13,8 @@ has NO comparison words):
      cannot just copy a direction word. Trained on original+masked mix.
 
 Out: JSONL {finding, prior_ctx, current_ctx, label, masked, subject_id}. Split by subject into train/val.
-Run: python build_direction_trainset.py --out_dir data/direction
+Run: python build_direction_trainset.py   # -> $PRIOREDIT_OUT/direction/{train,val}.jsonl
+The output holds MIMIC-CXR report sentences: keep it under out/ (gitignored), never in data/.
 """
 import os as _os, sys as _sys
 _here = _os.path.dirname(_os.path.abspath(__file__))

@@ -5,7 +5,8 @@ Reads a report and returns, per finding, one of {pos, neg, none} = present / exp
 unmentioned. For the five MS-CXR-T findings the mention lexicon is aligned to the official Stanford
 CheXpert labeler's phrase lists, so the extractor implements the authoritative label definitions
 rather than a hand-tuned lexicon; the remaining findings use hand-written mention patterns.
-Negation/uncertainty uses NegBio-style cues ("no", "without", "clear", "resolved").
+Negation uses NegBio-style cues ("no", "without", "clear", "resolved"). The hand-written extractor has
+no uncertain state; the official-labeler variant below maps uncertain to present.
 
 Also provides the severity ordinal (trace/small/mild < moderate < large/severe) used only for the
 severity-jump tag, and comparison logic that turns a (prior, current) state pair into the two
@@ -32,7 +33,7 @@ import json, re, argparse, collections, os, subprocess
 
 MANIFEST = os.path.join(paths.OUT, "mscxrt/manifest.jsonl")
 OUTDIR = os.path.join(paths.OUT, "mscxrt")
-SCORER = os.path.join(paths.SCRIPTS, "score_mscxrt.py")
+SCORER = os.path.join(paths.SCRIPTS, "direction_probe", "score_mscxrt.py")
 PY = paths.PY_LABEL
 FINDINGS = ["consolidation", "edema", "pleural_effusion", "pneumonia", "pneumothorax"]  # MS-CXR-T subset
 
@@ -119,7 +120,8 @@ def _clean_for_hash(t):
 
 
 def load_official(path=None):
-    """Load the {sha1(clean_text): {finding: pos|neg|unc|none}} store produced by chexpert_label.py."""
+    """Load the {sha1(clean_text): {finding: pos|neg|unc|none}} store (data/labels/official_labels_by_hash.json): the official labeler's output keyed by
+    the hash of the cleaned text."""
     global _OFFICIAL_STORE
     p = path or _OFFICIAL_PATH
     _OFFICIAL_STORE = _json.load(open(p)) if _os.path.exists(p) else {}
@@ -202,7 +204,7 @@ def main():
     if miss:
         print(f"(warning: {miss} pairs had no draft)")
     print(f"### v0 verifier severity/progression (current={tag}) vs MS-CXR-T ###")
-    subprocess.run([PY, SCORER, "--pred", pp])
+    subprocess.run([PY, SCORER, "--pred", pp], check=True)
 
 
 if __name__ == "__main__":

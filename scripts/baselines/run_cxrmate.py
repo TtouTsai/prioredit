@@ -4,7 +4,7 @@ whether a DIFFERENT architecture that feeds the prior report into generation als
 echo / hallucination. Feeds current frontal image + prior findings/impression (from swcmp last_finding /
 last_impression). Output: {id: findings_text}. Then score with temporal_halluc_official / temporal_assessment.
 
-  llmrg4/bin/python run_cxrmate.py --ann <swcmp annotation.json> --out <json> [--with-prior-only]
+  python run_cxrmate.py --ann <swcmp annotation.json> --out <json> [--with_prior_only]
 """
 import os as _os, sys as _sys
 _here = _os.path.dirname(_os.path.abspath(__file__))
@@ -91,6 +91,7 @@ def main():
         if (s // a.batch_size) % 10 == 0:
             print(f"  {s + len(batch)}/{len(recs)}", flush=True)
 
+    os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
     json.dump(out, open(a.out, "w"))
     print(f"dumped {len(out)} -> {a.out}")
 

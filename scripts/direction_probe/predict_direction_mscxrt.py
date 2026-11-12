@@ -36,7 +36,7 @@ from transformers import AutoTokenizer
 MANIFEST = os.path.join(paths.OUT, "mscxrt/manifest.jsonl")
 OUT = os.path.join(paths.OUT, "models/direction_verifier")
 OUTDIR = os.path.join(paths.OUT, "mscxrt")
-SCORER = os.path.join(paths.SCRIPTS, "score_mscxrt.py")
+SCORER = os.path.join(paths.SCRIPTS, "direction_probe", "score_mscxrt.py")
 PY = paths.PY_LABEL
 SEV_WORD = {1: "minimal", 2: "small", 3: "moderate", 4: "large"}
 
@@ -138,7 +138,7 @@ def main():
     pp = f"{OUTDIR}/pred_{a.name}.json"
     json.dump(pred, open(pp, "w"))
     print(f"### direction verifier (current={a.current}, fuse={a.fuse}) -> {pp} ###")
-    subprocess.run([PY, SCORER, "--pred", pp])
+    subprocess.run([PY, SCORER, "--pred", pp], check=True)
 
 
 if __name__ == "__main__":

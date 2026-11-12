@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Temporal hallucination rate: a temporal claim is HALLUCINATED if the PRIOR report gives no basis
-for it (direction-aware, unlike TEM/tclaim):
+for it (direction-aware):
   - unchanged/increased/decreased/resolved on finding X  -> requires X PRESENT in prior (else made up)
   - new/interval-development on X                         -> requires X ABSENT  in prior (else not new)
 
@@ -10,8 +10,13 @@ generation (sw) hallucinates temporal because it does not check the prior.
 
 Run: python temporal_halluc_eval.py --pred <report json> --ann <sw annotation> --name <label>
 """
+import os as _os, sys as _sys
+_scripts = _os.path.dirname(_os.path.abspath(__file__))
+while _scripts != "/" and not _os.path.exists(_os.path.join(_scripts, "paths.py")):
+    _scripts = _os.path.dirname(_scripts)
+_sys.path.insert(0, _scripts)
+import paths  # noqa: E402,F401  (also puts scripts/* groups on sys.path)
 import json, re, argparse, os, sys, collections
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from state_extractor import extract, FIND_KW
 
 # UNAMBIGUOUS comparison words only (exclude descriptive enlarged/larger/smaller/greater/bigger which

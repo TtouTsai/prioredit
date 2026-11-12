@@ -1,10 +1,13 @@
 #!/usr/bin/env python
-"""Change-class analyses for Appendix E: absolute-error accounting and the strict `new` subset.
+"""Change-class analyses: Sec. 7 absolute-error accounting and the strict change classes (Sec. 7, App. E).
 
 (a) Absolute-error accounting: total temporal claims / correct / wrong / per-report, for sw, PriorEdit
     and the baselines.
 (b) Strict `new` analysis: new precision restricted to the subset where the prior EXPLICITLY negates the
     finding (labeler prior == neg), plus the composition of true-new (prior negated vs merely unmentioned).
+(c) Strict `resolved` analysis: the truth restricted to resolutions the CURRENT GT report explicitly
+    negates (labeler current == neg; 220 of 1356), with the composition of true-resolved, strict resolved
+    precision (every asserted `resolved` outside that subset counts as an error) and strict recall.
 
 Reads the shipped labels and generation files only; imports the shared temporal_assessment metric.
 Env: bare Python 3.10+ (standard library); no GPU.
@@ -19,7 +22,6 @@ import paths  # noqa: E402  (roots come from PRIOREDIT_* env vars; see scripts/p
 import json, os, sys, collections
 from temporal_assessment import FIND, asserted_transitions, true_transitions  # shared, unchanged
 
-RG = paths.LLMRG4
 PRIOR = json.load(open(os.path.join(paths.LABELS, "prior_chexpert_labels.json")))
 GT = json.load(open(os.path.join(paths.LABELS, "gt_chexpert_labels.json")))
 PREDS = {
@@ -40,7 +42,7 @@ def ids_for(pred):
 
 
 def prior_state(i, f):
-    """official CheXpert prior label -> present/absent/none-mention. pos or unc = present."""
+    """official CheXpert prior label state: 'pos' | 'neg' | 'unc' | 'none' (none = not mentioned)."""
     lab = PRIOR[i].get(f)
     return lab  # 'pos'|'neg'|'unc'|'none'
 
@@ -117,3 +119,43 @@ for name in ["sw", "PriorEdit", "CXRMate", "MLRG"]:
     sp = s_tp / s_pred if s_pred else 0
     print(f"  {name:10s} broad new-prec={bp*100:4.0f}% ({b_tp}/{b_pred})   "
           f"strict(prior=neg) new-prec={sp*100:4.0f}% ({s_tp}/{s_pred})")
+print()
+
+print("=" * 78)
+print("(c)  'resolved'-class strict analysis")
+print("=" * 78)
+# composition of true-resolved: current GT explicitly negated vs merely unmentioned vs uncertain
+comp = collections.Counter()
+for i in sample_ids:
+    tt = true_transitions(PRIOR[i], GT[i])
+    for f in FIND:
+        if tt[f] == "resolved":  # prior present & current not present
+            comp[GT[i].get(f, "none")] += 1
+tot_res = sum(comp.values())
+print(f"true-resolved composition (n={tot_res}):")
+for st in ("neg", "none", "unc"):
+    if comp[st]:
+        print(f"  current={st:5s}: {comp[st]:5d}  ({comp[st]/tot_res*100:.1f}%)")
+print("  -> 'current=neg' are the clinically unambiguous (explicitly negated) resolutions.")
+print()
+
+print("resolved precision: BROAD vs STRICT (current explicitly negated), and strict recall")
+for name in ["sw", "PriorEdit", "CXRMate", "MLRG"]:
+    pred = load_pred(PREDS[name])
+    ids = ids_for(pred)
+    n_pred = b_tp = s_tp = 0
+    for i in ids:
+        tt = true_transitions(PRIOR[i], GT[i])
+        at = asserted_transitions(pred[i])
+        for f in FIND:
+            if at[f] == "resolved":
+                n_pred += 1
+                if tt[f] == "resolved":
+                    b_tp += 1
+                    if GT[i].get(f) == "neg":
+                        s_tp += 1
+    bp = b_tp / n_pred if n_pred else 0
+    sp = s_tp / n_pred if n_pred else 0
+    print(f"  {name:10s} broad resolved-prec={bp*100:4.0f}% ({b_tp}/{n_pred})   "
+          f"strict resolved-prec={sp*100:4.0f}% ({s_tp}/{n_pred})   "
+          f"strict recall={s_tp}/{comp['neg']}")

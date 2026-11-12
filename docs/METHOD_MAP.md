@@ -16,9 +16,9 @@ Where each formal object in the paper lives in this repository.
 | rule editor: `(ext(R)_f, s_f)` → tag, merged in place | `rule_editor.py`, `edit_inplace()`. `τ_neg` branch emits `resolved` when `s_f = neg` |
 | adopted editor configuration | `--confidence --thresholds --inplace --high_conf --keep_unchanged --sev_jump 2` |
 
-Findings left closed for coverage (pleural effusion, consolidation) appear in
-`configs/confidence_thresholds.json` with `open_pos: false` — too few clean validation pairs
-(App. C).
+Pleural effusion and consolidation are absent from `configs/confidence_thresholds.json`:
+`calibrate.py` omits findings with too few clean in-scope validation pairs (App. C). Lung lesion
+and atelectasis are fitted but left closed (`open_pos: false`, `open_neg: false`).
 
 ## TCA (§3)
 
@@ -49,11 +49,11 @@ against the prior, TCA against the true transition (prior × current GT).
 | App. C, Table 6 confidence calibration | `scripts/method/calibrate.py` |
 | App. F, threshold operating point (risk-coverage sweep of P*) | `scripts/analysis/risk_coverage_sweep.py` |
 | App. D, MS-CXR-T direction probe (78.4 ceiling → 36.1 deployment) | `scripts/direction_probe/` |
-| §7 absolute-error accounting (0.75 vs 0.61 errors per report) + App. E strict `new` | `scripts/analysis/change_class_analysis.py` |
+| §7 absolute-error accounting (0.75 vs 0.61 errors per report) + strict `new` and `resolved` (§7, App. E) | `scripts/analysis/change_class_analysis.py` |
 | App. F, LLM-editor ablation (35.6% halluc / 13% change P) | `scripts/analysis/llm_editor_ablation.py` |
 | App. F, same editor on other bases: `sw` (39%, 115 resolved, 21.5% halluc), Qwen3-VL-2B (21%) | `scripts/method/rule_editor.py --inplace --high_conf --keep_unchanged` on `llmrg4_sw.json` / `qwen3vl_imageonly.json` |
 | App. F, Table 8 image-only bases (Qwen3-VL-2B vs `sn`) | `scripts/baselines/run_qwen3vl.py` (generation), `make_eval_dir.py --with_prior` + `paper_chexbert_eval.py` (presence), `scripts/analysis/imageonly_bases_rate.py` (RaTE), `temporal_assessment.py` (Change) |
-| Table 4 and App. H (Tables 9, 10), error directions per study and per finding | `scripts/analysis/error_directions.py` |
+| Table 4, Table 7 (full confusion matrices) and App. H (Tables 9, 10), error directions | `scripts/analysis/error_directions.py` |
 | §7 and App. E, independent-labeler robustness | `scripts/analysis/independent_labeler.py`, fed by `scripts/analysis/neural_chexbert_labels.py` (neural prior/GT labels) |
 | App. E, independent-parser robustness | `scripts/analysis/llm_parser_extract.py` (local Ollama LLM parser: Qwen3-30B-A3B, MedGemma-27B) + `scripts/analysis/llm_parser_eval.py`; text-free asserted-transition caches shipped in `data/llm_parser/` |
 | §7 / Table 2 and App. C, presence bootstrap 95% CIs (main and standard split) | `scripts/analysis/bootstrap_presence_ci.py` |

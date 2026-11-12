@@ -20,13 +20,13 @@
 #   PRIOREDIT_OUT    output root for the generated reports
 set -euo pipefail
 
-ANN="$1"; VERSION="$2"
+ANN="$(realpath "$1")"; VERSION="$2"
+OUT="$(realpath -m "${PRIOREDIT_OUT:-$PWD/out}")/mlrg"   # resolved before the cd
 cd "$MLRG_DIR"
 
 RG="${PRIOREDIT_LLMRG4:?set PRIOREDIT_LLMRG4}"
 DATA="${PRIOREDIT_DATA:?set PRIOREDIT_DATA}"
 SNAP="${MLRG_SNAPSHOT:?set MLRG_SNAPSHOT}"
-OUT="${PRIOREDIT_OUT:-./out}/mlrg"
 
 HF_HOME="${HF_HOME:-$DATA/hf-cache}" CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}" \
 "${PRIOREDIT_PY_MODEL:-python}" main_v0926_ablation_study.py \

@@ -4,8 +4,8 @@ the 14 CheXpert labels as state in {pos, neg, unc, none}. This is the authoritat
 (mention phrase lists + NegBio negation/uncertainty), used to replace both (a) the hallucination GT and
 (b) our hand-written rule extractor.
 
-The labeler container is built from stanfordmlgroup/chexpert-labeler (see tmp/chexpert-labeler, image tag
-`chexpert-labeler`). Output CSV columns: Reports + 14 CATEGORIES; cell 1.0/0.0/-1.0/blank =
+The labeler container is built from https://github.com/stanfordmlgroup/chexpert-labeler and tagged
+`chexpert-labeler`. Output CSV columns: Reports + 14 CATEGORIES; cell 1.0/0.0/-1.0/blank =
 positive/negative/uncertain/not-mentioned.
 
 CLI:

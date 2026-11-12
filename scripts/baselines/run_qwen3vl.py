@@ -4,7 +4,7 @@
 Generates the FINDINGS section from the current frontal image alone with the released
 dmusingu/Qwen3-VL-2B-RRG-SFT checkpoint (Qwen3-VL-2B fine-tuned for report generation), on the
 1337 with-prior test studies (the studies with prior labels in data/labels/). Greedy decoding,
-max_new_tokens=180, one fixed instruction. Output is {study_id: "finding : <text>"}, the same
+max_new_tokens=180, one fixed instruction. Output is {id: "finding : <text>"}, the same
 format as the other generation files, and is resumable (re-running skips cached ids).
 
   python run_qwen3vl.py --ann $PRIOREDIT_LLMRG4/data/swcmp/annotation.json \
@@ -12,7 +12,8 @@ format as the other generation files, and is resumable (re-running skips cached 
 
 Then score it like any other generation file:
   TCA (Tier A):  temporal_assessment.py --preds Qwen3-VL:<out>       -> 0 asserted change events
-  editor:        rule_editor.py --drafts <out> --ann ... --inplace --high_conf  -> 21% change precision
+  editor:        rule_editor.py --drafts <out> --ann ... --inplace --high_conf --keep_unchanged
+                                                                     -> 21% change precision
   presence/RaTE: make_eval_dir.py + paper_chexbert_eval.py / radeval_score.py   -> Table 8
 
 Env: transformers with Qwen3-VL support (>= 4.57), torch, one GPU (bfloat16, about 5 GB).
@@ -50,6 +51,7 @@ def main():
                      and r.get("APPA_imagepath")), key=lambda r: str(r["id"]))
     if a.limit:
         cohort = cohort[:a.limit]
+    os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
     cache = json.load(open(a.out)) if os.path.exists(a.out) else {}
     todo = [r for r in cohort if str(r["id"]) not in cache]
     print(f"cohort={len(cohort)} cached={len(cache)} todo={len(todo)} -> {a.out}", flush=True)

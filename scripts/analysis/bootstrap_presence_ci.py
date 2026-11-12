@@ -5,13 +5,17 @@ a per-study 14-vector, and resamples studies (B=2000) to get each system's F1 CI
 PriorEdit-minus-baseline difference CI.
 
 Two GT conventions, reported separately in the paper:
-  --canonical  scored against the LLM-RG4 clean GT: PriorEdit vs sw (+0.22, CI [-0.79, +1.23], parity)
-               and vs its own sn base (+1.11, CI [+0.69, +1.52], a real lift)
-  --orig       scored against the original MIMIC-CXR GT: PriorEdit trails sw (-1.71, CI [-2.75, -0.69])
+  --canonical  main split, scored against the LLM-RG4 clean GT (n=1698): PriorEdit vs sw
+               (+0.37, CI [-0.67, +1.40], parity, Sec. 7) and vs its own sn base
+               (+1.25, CI [+0.80, +1.69], a real lift, App. C)
+  --orig       standard MIMIC-CXR split, scored against its original GT (with-prior subset, n=1576):
+               PriorEdit trails sw (-1.71, CI [-2.75, -0.69], Sec. 7). The standard-split generations
+               are not shipped.
 
 Each argument is a whitespace-separated list of name:eval_dir, where eval_dir holds pred.csv and gt.csv
-with a "Report Impression" column (produced by scripts/metric/eval_stage2_radeval.py from the shipped
-generations and your GT text). The first name in each split is the reference (PriorEdit); differences
+with a "Report Impression" column (produced by scripts/metric/make_eval_dir.py from a generation file
+and your GT text, or by eval_stage2_radeval.py from an LLM-RG4 inference output dir). This script changes
+into $PRIOREDIT_LLMRG4 at import, so pass absolute eval-dir paths. The first name in each split is the reference (PriorEdit); differences
 are taken against it. GT report text is MIMIC-CXR under a PhysioNet DUA and is not redistributed here.
 
 Env: needs the CheXbert checkpoint and a GPU (imports models.chexbert from the LLM-RG4

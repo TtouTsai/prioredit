@@ -7,8 +7,8 @@ transitions WITHOUT editing that module, we temporarily rebind TA.asserted_trans
 counting logic stay byte-identical to the paper's scorer.
 
 The LLM caches (data/llm_parser/asserted_*_<tag>.json) are shipped and text-free, so the LLM-parser
-columns reproduce from this release alone. The regex baseline needs the report text (PriorEdit/sw from
-the shipped generations; GT self from the LLM-RG4 annotation, which is MIMIC-CXR under a DUA).
+columns and both gaps reproduce from this release alone. Only the regex GT-self cell needs the GT report
+text (the LLM-RG4 annotation, MIMIC-CXR under a DUA); without $PRIOREDIT_LLMRG4 it is printed as n/a.
 
   python llm_parser_eval.py --tag qwen3        # or: --tag medgemma
 """
@@ -22,7 +22,7 @@ import paths  # noqa: E402
 import os, sys, json, argparse
 import temporal_assessment as TA  # UNCHANGED shared module
 sys.path.insert(0, _here)
-from llm_parser_extract import load_inputs, OUTDIR  # noqa: E402
+from llm_parser_extract import load_inputs, _gen, RG, OUTDIR  # noqa: E402
 
 
 def restrict(d, ids):
@@ -49,7 +49,13 @@ def main():
     a = ap.parse_args()
     prior = json.load(open(os.path.join(paths.LABELS, "prior_chexpert_labels.json")))
     gt = json.load(open(os.path.join(paths.LABELS, "gt_chexpert_labels.json")))
-    _, texts = load_inputs()
+    if os.path.exists(os.path.join(RG, "data/swcmp/annotation.json")):
+        _, texts = load_inputs()
+    else:  # release-only: PriorEdit/sw text is shipped, GT text is not
+        cohort = [i for i in prior if i in gt]
+        texts = {"gtself": None,
+                 "prioredit": _gen(os.path.join(paths.GENERATIONS, "prioredit.json"), cohort),
+                 "sw": _gen(os.path.join(paths.GENERATIONS, "llmrg4_sw.json"), cohort)}
 
     caches = {}
     for s in ("gtself", "prioredit", "sw"):
@@ -57,7 +63,10 @@ def main():
         if not os.path.exists(p):
             sys.exit(f"missing cache: {p}  (produce with llm_parser_extract.py --tag {a.tag})")
         caches[s] = json.load(open(p))
-    ids = sorted(set(caches["gtself"]) & set(prior) & set(gt) & set(texts["gtself"]))
+    ids = set(caches["gtself"]) & set(prior) & set(gt) & set(texts["prioredit"]) & set(texts["sw"])
+    if texts["gtself"] is not None:
+        ids &= set(texts["gtself"])
+    ids = sorted(ids)
     print(f"tag={a.tag}: scored on the same {len(ids)} studies for every system/parser\n")
 
     def chg(system, parser):
@@ -66,8 +75,9 @@ def main():
         return rows["change(micro)"][0] * 100
 
     print(f"{'':10s}{'regex':>9}{'LLM':>9}")
-    gt_r, gt_l = chg("gtself", "regex"), chg("gtself", "LLM")
-    print(f"{'GT self':10s}{gt_r:>8.1f}%{gt_l:>8.1f}%   (App. E: not a regex artifact)")
+    gt_l = chg("gtself", "LLM")
+    gt_r = f"{chg('gtself', 'regex'):>8.1f}%" if texts["gtself"] is not None else f"{'n/a':>9}"
+    print(f"{'GT self':10s}{gt_r}{gt_l:>8.1f}%   (App. E: not a regex artifact)")
     for s in ("prioredit", "sw"):
         print(f"{s:10s}{chg(s,'regex'):>8.1f}%{chg(s,'LLM'):>8.1f}%")
     for parser in ("regex", "LLM"):

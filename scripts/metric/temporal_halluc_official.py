@@ -29,7 +29,8 @@ FINDINGS = set(CAT2FD.values())
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--pred", required=True); ap.add_argument("--ann", required=True)
+    ap.add_argument("--pred", required=True)
+    ap.add_argument("--ann", help="optional swcmp annotation: only maps study_id-keyed predictions to label ids")
     ap.add_argument("--prior_labels", required=True, help="chexpert_label.py output {id:{finding:state}}")
     ap.add_argument("--name", default="pred")
     ap.add_argument("--present_includes_uncertain", action="store_true", default=True)
@@ -37,7 +38,7 @@ def main():
     pred = json.load(open(a.pred))
     labels = json.load(open(a.prior_labels))
     # map both id and study_id to the labeled prior (labels are keyed by the annotation 'id')
-    ann = json.load(open(a.ann))["test"]
+    ann = json.load(open(a.ann))["test"] if a.ann else []
     id2sid = {str(r["id"]): str(r["study_id"]) for r in ann}
     # prior present per finding: official pos (or uncertain) counts as present
     def prior_present(key):

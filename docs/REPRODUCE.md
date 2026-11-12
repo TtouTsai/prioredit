@@ -6,22 +6,27 @@ honest status. Three tiers:
 * **A — self-contained.** Runs on this release alone (shipped generations + labels). No GPU.
 * **B — needs external resources.** Requires the model weights, the LLM-RG4 checkout, and/or the
   image corpus, all obtainable but not redistributable here.
-* **C — recompute from shipped inputs.** The number is correct and its inputs are shipped; a
-  preserved script under `scripts/analysis/` recomputes it (a couple remain short loops over
-  `temporal_assessment.score()`, described inline).
+* **C — recompute with a preserved script.** Each row names the script and the inputs it needs.
+  Some rows need resources from Tier B (GT report text, CheXbert, a GPU), and a few are short loops
+  over `temporal_assessment.score()`, described inline.
 
 ```bash
 export PRIOREDIT_ROOT=$PWD
 P=data/labels/prior_chexpert_labels.json
 G=data/labels/gt_chexpert_labels.json
 GEN=data/generations
+mkdir -p out          # regenerable outputs (gitignored)
 ```
+
+Scripts that import LLM-RG4 code change into `$PRIOREDIT_LLMRG4` at import, so pass absolute paths
+to them (`paper_chexbert_eval.py`, `bootstrap_presence_ci.py`, `neural_chexbert_labels.py`,
+`calibrate.py`, `probe_confidence.py`, `llm_editor_ablation.py`, `temporal_halluc_indep.py`).
 
 ---
 
 ## Tier A — runs on this release alone
 
-### Table 2, TCA columns + Table 7 (confusion matrices) + §7 per-category precision
+### Table 2, TCA columns + §7 per-category precision + Figure 2
 
 ```bash
 python scripts/metric/temporal_assessment.py --prior $P --gt $G \
@@ -29,30 +34,42 @@ python scripts/metric/temporal_assessment.py --prior $P --gt $G \
           CXRMate:$GEN/cxrmate_withprior.json MLRG:$GEN/mlrg_withprior.json
 ```
 
-Produces: change P/R (44% / 28% / 30% / 20% / 19%), per-category new/resolved/persistent
-precision, resolved true-positives (138 vs 2), and the asserted-vs-true transition counts of
-Table 7. Verified to reproduce the paper exactly.
+Produces: change precision (44% / 28% / 30% / 20% / 19%) and recall, per-category
+new/resolved/persistent precision and recall, resolved true-positives (138 vs 2), and the
+diagonal and block totals of Table 7 (the full matrices are printed by `error_directions.py`
+below). The `#pred` of the `change(micro)` row is the change volume of Figure 2 (506 vs 201), and
+the sum of `#pred` over new/resolved/persistent divided by 1337 is the grounded temporal
+statements per report (1.59 / 0.94 / 0.04 / 0.58 / 0.44). Verified to reproduce the paper exactly.
 
-### §5 / Table 1, temporal hallucination rate
+### §5 / Table 1 and §7, temporal hallucination rate
 
 ```bash
-python scripts/metric/temporal_halluc_official.py --pred $GEN/prioredit.json \
-  --ann $PRIOREDIT_LLMRG4/data/swcmp/annotation.json --prior_labels $P --name PriorEdit
+for m in prioredit llmrg4_sw llmrg4_sn cxrmate_noprior mlrg_noprior mlrg_withprior; do
+  python scripts/metric/temporal_halluc_official.py --pred $GEN/$m.json --prior_labels $P --name $m
+done
+python scripts/metric/temporal_assessment.py --prior $P --gt $G \
+  --preds CXRMate-withheld:$GEN/cxrmate_noprior.json MLRG-withheld:$GEN/mlrg_noprior.json
 ```
 
-The rate itself needs only the prior labels, but the script reads the study list and prior text
-from the LLM-RG4 `swcmp` annotation, so in practice this is **Tier B** (see below). The
-prior-*withheld* columns of Table 1 use `cxrmate_noprior.json` / `mlrg_noprior.json` the same way.
+Hallucination: PriorEdit 4.1%, `sw` 40.7% (§7), and the withheld column of Table 1, LLM-RG4
+(`sn`) 44.4%, CXRMate 39.2%, MLRG 43.7%. `mlrg_withprior` gives the 41.6% of the App. G pipeline
+validation. The second command gives the withheld T.stmts of Table 1 (sum of `#pred` over
+new/resolved/persistent divided by 1337: CXRMate 0.54, MLRG 0.40). `--ann` is optional and only
+maps study-id-keyed predictions to the label ids.
 
-### §7 absolute-error accounting and App. E strict `new` analysis
+### §7 absolute-error accounting and the strict change classes (§7, App. E)
 
 ```bash
 python scripts/analysis/change_class_analysis.py
 ```
 
-Self-contained: reads the shipped labels and all four generation files.
+Self-contained: reads the shipped labels and all four generation files. Prints the errors per
+report (PriorEdit 0.75 vs `sw` 0.61), the strict `new` analysis (1572 true-new = 273 explicitly
+prior-negated / 1106 unmentioned / 193 uncertain; PriorEdit 42% = 72/170, `sw` asserts 15) and the
+strict `resolved` analysis (1356 true resolutions = 220 explicitly negated / 977 unmentioned / 159
+uncertain; PriorEdit strict precision 26% = 73/280, strict recall 73/220, `sw` 1).
 
-### Table 4 and App. H (Tables 9 and 10), error directions per study and per finding
+### Table 4, Table 7 and App. H (Tables 9 and 10), error directions
 
 ```bash
 python scripts/analysis/error_directions.py
@@ -62,7 +79,8 @@ Self-contained. Prints Table 4 (PriorEdit vs `sw`: false all-clear 60 vs 6, new 
 123 vs 211, false `new` 142 vs 130, resolved called unchanged 459 vs 169, correct `resolved` 138
 vs 2), Table 9 for the four prior-aware models, Table 10 per finding, and the split of the
 resolved findings called unchanged by current-GT label state (PriorEdit 339 unmentioned / 77
-uncertain / 43 negated, `sw` 128 / 25 / 16). Verified to reproduce the paper exactly.
+uncertain / 43 negated, `sw` 128 / 25 / 16), and the full Table 7 matrices for the four models.
+Verified to reproduce the paper exactly.
 
 ### Table 8 Change column, image-only bases
 
@@ -90,7 +108,9 @@ Three steps. The adopted flags are exactly those recorded below — no others.
 #    -> save/swcmp_sn_off/result/test_result.json   (shipped as $GEN/llmrg4_sn.json)
 
 # 2. confidence probe c_f(I), Eq. 1 — one teacher-forced forward pass per study (GPU)
-python scripts/method/probe_confidence.py        # -> finding_confidence.json (shipped)
+python scripts/method/probe_confidence.py --ann $PRIOREDIT_LLMRG4/data/swcmp/annotation.json \
+  --save $PRIOREDIT_ROOT/out/conf_probe   # -> out/conf_probe/result/finding_confidence.json
+                                          #    (shipped as data/finding_confidence.json)
 
 # 3. confidence-gated rule editor, Eq. 2 + the tag table
 python scripts/method/rule_editor.py \
@@ -123,7 +143,10 @@ python scripts/baselines/run_cxrmate.py --ann <swcmp annotation> --out out/cxrma
 bash   scripts/baselines/run_mlrg.sh   <annotation.json> <version-tag>
 ```
 
-Both need the released checkpoints and the image corpus. Our MLRG run matches the authors'
+Both need the released checkpoints and the image corpus. The scripts produce the prior-present
+runs. For the prior-withheld runs (App. G) we removed the prior signal each model consumes:
+CXRMate's prior findings and impression set to empty (its no-prior tokens), and MLRG's prior image
+removed so its absence encoding activates. Neither variant is a flag here. Our MLRG run matches the authors'
 released generations' hallucination rate exactly (41.6% vs 41.6%) — the pipeline validation
 reported in App. G. MLRG's official test protocol is prior-image-only; `run_mlrg.sh` documents why.
 
@@ -134,10 +157,13 @@ python scripts/direction_probe/prep_mscxrt.py              # build the eval mani
 python scripts/direction_probe/build_direction_trainset.py # silver labels, MS-CXR-T subjects excluded
 python scripts/direction_probe/train_direction_verifier.py --epochs 4
 python scripts/direction_probe/predict_direction_mscxrt.py --current gold   # 78.4 ceiling
-python scripts/direction_probe/predict_direction_mscxrt.py --current $GEN/llmrg4_sn.json  # 36.1
+python scripts/direction_probe/predict_direction_mscxrt.py --current <sn drafts> --name sn_draft  # 36.1
 ```
 
-Needs MS-CXR-T, the image corpus, CXR-BERT weights, and a GPU.
+Needs MS-CXR-T, the image corpus, CXR-BERT weights, and a GPU. `<sn drafts>` are LLM-RG4 `sn`
+drafts generated on the MS-CXR-T current images (keyed by dicom id); they are not shipped, and the
+shipped `llmrg4_sn.json` covers the evaluation split, not MS-CXR-T. The 69.6 (comparison words
+stripped) and 34.0 (prior-only) controls of App. D are not exposed as flags.
 
 ### App. C, confidence-coverage counts (338 / 54 / precision 61%)
 
@@ -189,19 +215,19 @@ keep them local. Generation needs one GPU and the `dmusingu/Qwen3-VL-2B-RRG-SFT`
 
 ## Tier C — inputs shipped; recompute with the analysis scripts
 
-These numbers are recomputed from shipped inputs. Most now have a preserved script under
-`scripts/analysis/` (named below); a couple remain short loops over `temporal_assessment.score()`.
+Each row names the script and what it needs beyond the shipped files.
 
 | paper number | how to recompute |
 |---|---|
 | Presence bootstrap 95% CIs — §7 (PriorEdit−`sw` +0.37 CI [−0.67,+1.40]) and App. C (PriorEdit−`sn` +1.25 CI [+0.80,+1.69]) | `scripts/analysis/bootstrap_presence_ci.py --canonical PriorEdit:<dir> sw:<dir> sn:<dir>` (study-level bootstrap, B=2000, CheXbert-14 micro-F1, n=1698) |
-| Standard-split presence — §7 (59.23 vs 60.94, −1.71 CI [−2.75,−0.69], n=1576) | same script, `--orig PriorEdit:<dir> sw:<dir>` (the standard MIMIC-CXR split, scored against its original GT) |
+| Standard-split presence — §7 (59.23 vs 60.94, −1.71 CI [−2.75,−0.69], n=1576) | same script, `--orig PriorEdit:<dir> sw:<dir>` (the standard MIMIC-CXR split, scored against its original GT). The standard-split generations of PriorEdit and `sw` are not shipped: regenerate them with the pipeline above on that split |
 | Paired change-precision CI — §7 (+15.5 CI [+7.6,+22.8]) and persistent (+19.2 CI [+16.3,+22.2]) | paired study-level bootstrap, B=2000, resampling the 1337 with-prior studies and rescoring both systems with `temporal_assessment.score()` on each resample |
-| Two-labeler-agreement subset — §7 (92.9% agreement; PriorEdit 44% vs `sw` 28%, 124 vs 1 resolved) | `scripts/analysis/neural_chexbert_labels.py` writes the neural prior/GT labels; `scripts/analysis/independent_labeler.py` restricts `temporal_assessment.score()` to the agreement subset (point `PRIOREDIT_NEURAL_LABELS` at them) |
-| Independent-parser robustness — App. E (GT self 39–45% across parsers; gap +15.5 regex / +13.8 Qwen3 / +12.8 MedGemma) | `scripts/analysis/llm_parser_eval.py --tag qwen3` (and `--tag medgemma`) re-scores from the shipped text-free caches in `data/llm_parser/` — no model needed. Regenerate with `llm_parser_extract.py` (local Ollama; report text stays on-machine per the DUA) |
-| Figure 2, change precision vs volume | x = `#pred` and y = precision of the `change(micro)` row per model from `temporal_assessment.py` above; error bars are Wilson binomial 95% CIs. All five points are printed by the Tier-A command |
+| Independent-labeler robustness — §7, App. E (gap +15.5 official, +25 neural prior (55 vs 30), +25 neural prior and GT (52 vs 27)) | `scripts/analysis/neural_chexbert_labels.py` writes the neural prior/GT labels (needs the report text and CheXbert); `scripts/analysis/independent_labeler.py` re-scores every model with them (point `PRIOREDIT_NEURAL_LABELS` at them) |
+| Two-labeler-agreement subset — §7, App. E (92.9% agreement; PriorEdit 44% vs `sw` 28%, 124 vs 1 resolved; five MS-CXR-T findings change recall 22% vs 3%) | not a separate script: keep the (study, finding) pairs on which the official and neural labels agree on present status (uncertain counted as present) for both prior and current GT, and pass the restricted labels to `temporal_assessment.score()` |
+| Independent-parser robustness — App. E (GT self 39–45% across parsers; gap +15.5 regex / +13.8 Qwen3 / +12.8 MedGemma) | `scripts/analysis/llm_parser_eval.py --tag qwen3` (and `--tag medgemma`) re-scores from the shipped text-free caches in `data/llm_parser/`, no model needed and runs on this release alone. Only the regex GT-self cell (43.2%) needs the GT text from `$PRIOREDIT_LLMRG4`. Regenerate the caches with `llm_parser_extract.py` (local Ollama; report text stays on-machine per the DUA) |
+| Figure 2, change precision vs volume | x = `#pred` and y = precision of the `change(micro)` row per model from `temporal_assessment.py` above; error bars are Wilson binomial 95% CIs. All five model points are printed by the Tier-A command. The GT reference line (43%, volume 280) needs the GT report text |
 | App. F, LLM-editor ablation — §8 (35.6% hallucination, 13% change precision on 300 studies) | `scripts/analysis/llm_editor_ablation.py` generates with the LoRA Vicuna backbone; score with `temporal_assessment.py` / `temporal_halluc_official.py` on the produced 300 ids |
-| App. C / F, threshold operating point (P* sweep) | `scripts/analysis/risk_coverage_sweep.py` — change precision stays flat across P* while the `unchanged` volume grows |
+| App. C / F, threshold operating point (P* sweep) | `scripts/analysis/risk_coverage_sweep.py --ann $PRIOREDIT_LLMRG4/data/swcmp/annotation.json` (the other inputs default to the shipped files) — change precision stays flat across P* while the `unchanged` volume grows |
 | App. F ablations: N=5 resampling, ROI crops, region-hint prompting, stacking; severity-jump Δ≥1 vs Δ≥2 | `rule_editor.py` exposes `--samples/--vote_k` (resampling) and `--sev_jump` (severity); the ROI and region-hint variants required generation runs whose driver scripts were not kept |
 
 `temporal_assessment.py` is importable, so each bootstrap above is a short loop over

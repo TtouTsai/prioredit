@@ -13,9 +13,10 @@ On the 1337 with-prior studies, every asserted transition is compared with the t
   correct "resolved" asserted resolved,   true transition is resolved
 
 Prints (1) Table 4 for PriorEdit and sw, (2) Table 9 for the four prior-aware models (total, mean per
-study, share of studies with at least one error), (3) Table 10 per finding for PriorEdit and sw, and
+study, share of studies with at least one error), (3) Table 10 per finding for PriorEdit and sw,
 (4) how the resolved findings called unchanged split by the current-GT label state
-(unmentioned / uncertain / explicitly negated; paper: PriorEdit 339 / 77 / 43, sw 128 / 25 / 16).
+(unmentioned / uncertain / explicitly negated; paper: PriorEdit 339 / 77 / 43, sw 128 / 25 / 16), and
+(5) Table 7, the full asserted-vs-true transition matrices for the three informative true classes.
 
 Reads the shipped labels and generation files only; imports the shared temporal_assessment metric.
 Env: bare Python 3.10+ (standard library); no GPU.
@@ -132,3 +133,22 @@ for name in ("PriorEdit", "sw"):
     c = R[name][4]
     print(f"{name:10s} unmentioned={c['unmentioned']}  uncertain={c['uncertain']}  "
           f"negated={c['negated']}  (total {sum(c.values())})")
+print()
+
+print("=" * 78)
+print("Table 7  asserted transition (columns) given the true transition (blocks)")
+print("=" * 78)
+COLS = ["none", "new", "resolved", "persistent"]
+print(f"{'':12s}" + "".join(f"{c:>11}" for c in COLS))
+for true_cls in ("resolved", "new", "persistent"):
+    print(f"true = {true_cls}")
+    for name in ("sw", "CXRMate", "MLRG", "PriorEdit"):
+        pred = load_pred(dict(MODELS)[name])
+        conf = collections.Counter()
+        for i in [i for i in PRIOR if i in GT and i in pred]:
+            tt = true_transitions(PRIOR[i], GT[i])
+            at = asserted_transitions(pred[i])
+            for f in FIND:
+                if tt[f] == true_cls:
+                    conf[at[f]] += 1
+        print(f"  {name:10s}" + "".join(f"{conf[c]:>11}" for c in COLS) + f"   (n={sum(conf.values())})")

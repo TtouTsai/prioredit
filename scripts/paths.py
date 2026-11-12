@@ -2,7 +2,8 @@
 """Single place where every filesystem root is resolved.
 
 The released scripts originally carried absolute paths from the development machine.
-They now read three environment variables so the code runs anywhere:
+They now read environment variables so the code runs anywhere (the roots below, plus PRIOREDIT_OUT
+and the PRIOREDIT_PY_* interpreters further down):
 
   PRIOREDIT_ROOT   this repository's checkout            (default: repo root, inferred)
   PRIOREDIT_DATA   corpora root: MIMIC-CXR reports/metadata, MIMIC-RG4, MS-CXR-T,

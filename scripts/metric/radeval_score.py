@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 """Unified, citable RRG metrics via RadEval (py3.11, torch cu128; see docs/ENVIRONMENTS.md).
 Reads pred.csv/gt.csv from our eval dirs and reports CheXbert micro/macro-14/5, RaTEScore, and
-TemporalEntityF1 — same-scale comparison to SOTA (EditGRPO). RadGraph currently skipped (vendored
-import bug in radeval 2.2.1).
+TemporalEntityF1. RadGraph is skipped (vendored import bug in radeval 2.2.1).
 Run (see docs/ENVIRONMENTS.md): PYTHONSAFEPATH=1 $PRIOREDIT_PY_METRIC radeval_score.py <eval_dir> ...
 Each eval_dir must contain pred.csv and gt.csv with a 'Report Impression' column."""
 import os as _os, sys as _sys
@@ -17,12 +16,11 @@ os.environ.setdefault("PYTHONSAFEPATH", "1")
 import pandas as pd
 from radeval import RadEval
 
-RES = os.path.join(paths.DATA, "RRG-DPO/results")
 METRICS = ["f1chexbert", "ratescore", "temporal"]
 
 
 def load(d, f):
-    p = f"{RES}/{d}_eval/{f}.csv" if not os.path.isdir(d) else f"{d}/{f}.csv"
+    p = os.path.join(d, f"{f}.csv")
     return pd.read_csv(p)["Report Impression"].fillna("").astype(str).tolist()
 
 
