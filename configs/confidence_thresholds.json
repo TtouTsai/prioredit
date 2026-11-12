@@ -6,7 +6,7 @@
   "neg_rule": "tau_neg = confidence at P(pos|c) = base_in_scope/2; the resolved (negative) branch",
   "fields": "n = in-scope validation pairs; base_in_scope = positive rate in scope; open_pos/open_neg = whether that branch is enabled for this finding; _alt_tau_pos_P50 = the alternative operating point at P=0.5, reported in App. F, not adopted",
   "closed": "pleural_effusion and consolidation are absent / closed: too few clean validation pairs (App. C)",
-  "paper": "Table 6, App. C"
+  "paper": "Table 5, App. C"
  },
  "cardiomegaly": {
   "n": 32,

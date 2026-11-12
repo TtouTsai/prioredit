@@ -8,7 +8,7 @@ contains MIMIC-CXR report text: keep it local (the PhysioNet DUA forbids redistr
   python make_eval_dir.py --pred data/generations/qwen3vl_imageonly.json \
       --ann $PRIOREDIT_LLMRG4/data/swcmp/annotation.json --out out/eval/qwen3vl --with_prior
 
---with_prior keeps only the 1337 with-prior studies (those in data/labels/), the cohort of Table 8.
+--with_prior keeps only the 1337 with-prior studies (those in data/labels/), the cohort of Table 7.
 Rows follow the generation file's key order. Env: bare Python 3.10+ (standard library).
 """
 import os as _os, sys as _sys

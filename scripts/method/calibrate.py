@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Per-finding confidence calibration (paper App. C, Table 6) -> configs/confidence_thresholds.json.
+"""Per-finding confidence calibration (paper App. C, Table 5) -> configs/confidence_thresholds.json.
 
 For each candidate finding, fit a logistic  P(y=1 | c) = sigma(a_f * c + b_f)  on the Eq. 2 coverage
 scope of the sw VALIDATION split -- prior present AND the image-only draft silent -- then invert it
@@ -9,7 +9,7 @@ scope of the sw VALIDATION split -- prior present AND the image-only draft silen
     tau_neg = (logit(base_f/2) - b_f) / a_f      resolved (negative) branch        (P* = base_f/2)
 
 and also the alternative P*=0.5 point reported (not adopted) in App. F. The label y is the
-current-presence truth from neural CheXbert over the current-GT report text. Prints the Table 6 view
+current-presence truth from neural CheXbert over the current-GT report text. Prints the Table 5 view
 (n, base, a_f, b_f, tau_pos, tau_neg) and writes the adopted thresholds config.
 
 Inputs are the VALIDATION split and are NOT redistributed (regenerate under your own PhysioNet DUA):
@@ -134,7 +134,7 @@ def main():
                   "alternative operating point at P=0.5, reported in App. F, not adopted",
         "closed": f"findings with < {MIN_PAIRS} clean in-scope pairs are omitted (pleural effusion, "
                   "consolidation): too few validation pairs (App. C)",
-        "paper": "Table 6, App. C",
+        "paper": "Table 5, App. C",
     }}
     for f in COND2NAME:
         xs, ys = [], []

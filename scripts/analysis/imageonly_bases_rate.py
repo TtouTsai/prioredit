@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""RaTE column of Table 8 (paper App. F): the image-only bases Qwen3-VL-2B and LLM-RG4 sn on the
+"""RaTE column of Table 7 (paper App. F): the image-only bases Qwen3-VL-2B and LLM-RG4 sn on the
 1337 with-prior studies.
 
 RaTEScore (the RaTEScore package) of each generated findings text against the current GT findings,
@@ -7,7 +7,7 @@ both with the leading "finding :" marker removed; reported as the mean over stud
 (paper: Qwen3-VL-2B .461, sn .597). radeval_score.py on the make_eval_dir.py dirs, which keep the
 marker, gives slightly lower values (Qwen3-VL .458, sn .596) with the same ordering.
 
-The other Table 8 columns: presence F1/P/R from paper_chexbert_eval.py on
+The other Table 7 columns: presence F1/P/R from paper_chexbert_eval.py on
 `make_eval_dir.py --with_prior` dirs, and Change from temporal_assessment.py (#pred of change(micro)).
 
   python imageonly_bases_rate.py --ann $PRIOREDIT_LLMRG4/data/swcmp/annotation.json

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Qwen3-VL-2B image-only base (paper App. F "Is a clean base necessary?", Table 8).
+"""Qwen3-VL-2B image-only base (paper App. F "Is a clean base necessary?", Table 7).
 
 Generates the FINDINGS section from the current frontal image alone with the released
 dmusingu/Qwen3-VL-2B-RRG-SFT checkpoint (Qwen3-VL-2B fine-tuned for report generation), on the
@@ -14,7 +14,7 @@ Then score it like any other generation file:
   TCA (Tier A):  temporal_assessment.py --preds Qwen3-VL:<out>       -> 0 asserted change events
   editor:        rule_editor.py --drafts <out> --ann ... --inplace --high_conf --keep_unchanged
                                                                      -> 21% change precision
-  presence/RaTE: make_eval_dir.py + paper_chexbert_eval.py / radeval_score.py   -> Table 8
+  presence/RaTE: make_eval_dir.py + paper_chexbert_eval.py / radeval_score.py   -> Table 7
 
 Env: transformers with Qwen3-VL support (>= 4.57), torch, one GPU (bfloat16, about 5 GB).
 """

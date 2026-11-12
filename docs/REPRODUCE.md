@@ -36,7 +36,7 @@ python scripts/metric/temporal_assessment.py --prior $P --gt $G \
 
 Produces: change precision (44% / 28% / 30% / 20% / 19%) and recall, per-category
 new/resolved/persistent precision and recall, resolved true-positives (138 vs 2), and the
-diagonal and block totals of Table 7 (the full matrices are printed by `error_directions.py`
+diagonal and block totals of Table 6 (the full matrices are printed by `error_directions.py`
 below). The `#pred` of the `change(micro)` row is the change volume of Figure 2 (506 vs 201), and
 the sum of `#pred` over new/resolved/persistent divided by 1337 is the grounded temporal
 statements per report (1.59 / 0.94 / 0.04 / 0.58 / 0.44). Verified to reproduce the paper exactly.
@@ -69,27 +69,27 @@ prior-negated / 1106 unmentioned / 193 uncertain; PriorEdit 42% = 72/170, `sw` a
 strict `resolved` analysis (1356 true resolutions = 220 explicitly negated / 977 unmentioned / 159
 uncertain; PriorEdit strict precision 26% = 73/280, strict recall 73/220, `sw` 1).
 
-### Table 4, Table 7 and App. H (Tables 9 and 10), error directions
+### Table 6 and App. H (Tables 8, 9 and 10), error directions
 
 ```bash
 python scripts/analysis/error_directions.py
 ```
 
-Self-contained. Prints Table 4 (PriorEdit vs `sw`: false all-clear 60 vs 6, new called unchanged
+Self-contained. Prints Table 8 (PriorEdit vs `sw`: false all-clear 60 vs 6, new called unchanged
 123 vs 211, false `new` 142 vs 130, resolved called unchanged 459 vs 169, correct `resolved` 138
 vs 2), Table 9 for the four prior-aware models, Table 10 per finding, and the split of the
 resolved findings called unchanged by current-GT label state (PriorEdit 339 unmentioned / 77
-uncertain / 43 negated, `sw` 128 / 25 / 16), and the full Table 7 matrices for the four models.
+uncertain / 43 negated, `sw` 128 / 25 / 16), and the full Table 6 matrices for the four models.
 Verified to reproduce the paper exactly.
 
-### Table 8 Change column, image-only bases
+### Table 7 Change column, image-only bases
 
 ```bash
 python scripts/metric/temporal_assessment.py --prior $P --gt $G \
   --preds Qwen3-VL:$GEN/qwen3vl_imageonly.json sn:$GEN/llmrg4_sn.json
 ```
 
-The `#pred` of the `change(micro)` row is the Change column of Table 8 (Qwen3-VL-2B 0, `sn` 20).
+The `#pred` of the `change(micro)` row is the Change column of Table 7 (Qwen3-VL-2B 0, `sn` 20).
 `qwen3vl_imageonly.json` is the Qwen3-VL-2B image-only generation of App. F (see Tier B for how
 it was produced).
 
@@ -192,7 +192,7 @@ hallucination 21.5% (`sw` alone 40.7%), Qwen3-VL-2B + editor change precision 21
 the hallucination rate. The editor reads the prior report text from the annotation, hence Tier
 B.
 
-### App. F / Table 8, Qwen3-VL-2B image-only base: generation, presence and RaTE
+### App. F / Table 7, Qwen3-VL-2B image-only base: generation, presence and RaTE
 
 ```bash
 python scripts/baselines/run_qwen3vl.py --ann $PRIOREDIT_LLMRG4/data/swcmp/annotation.json \

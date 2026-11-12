@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Error directions per model, per study and per finding (paper Table 4, App. H Tables 9 and 10).
+"""Error directions per model, per study and per finding (paper App. H Tables 8, 9 and 10, and Table 6).
 
 On the 1337 with-prior studies, every asserted transition is compared with the true transition
 (prior + current-GT CheXpert labels, exactly as in temporal_assessment.py):
@@ -12,11 +12,11 @@ On the 1337 with-prior studies, every asserted transition is compared with the t
   "new" when not new asserted new,        true transition is not new
   correct "resolved" asserted resolved,   true transition is resolved
 
-Prints (1) Table 4 for PriorEdit and sw, (2) Table 9 for the four prior-aware models (total, mean per
+Prints (1) Table 8 for PriorEdit and sw, (2) Table 9 for the four prior-aware models (total, mean per
 study, share of studies with at least one error), (3) Table 10 per finding for PriorEdit and sw,
 (4) how the resolved findings called unchanged split by the current-GT label state
 (unmentioned / uncertain / explicitly negated; paper: PriorEdit 339 / 77 / 43, sw 128 / 25 / 16), and
-(5) Table 7, the full asserted-vs-true transition matrices for the three informative true classes.
+(5) Table 6, the full asserted-vs-true transition matrices for the three informative true classes.
 
 Reads the shipped labels and generation files only; imports the shared temporal_assessment metric.
 Env: bare Python 3.10+ (standard library); no GPU.
@@ -86,7 +86,7 @@ def count(pred):
 R = {name: count(load_pred(fn)) for name, fn in MODELS}
 
 print("=" * 78)
-print("Table 4  error types (finding instances, 1337 with-prior studies)")
+print("Table 8  error types (finding instances, 1337 with-prior studies)")
 print("=" * 78)
 print(f"{'error type':38s}{'PriorEdit':>10}{'sw':>8}")
 for label, key in [('persistent -> "resolved" (all-clear)', "all_clear"),
@@ -136,7 +136,7 @@ for name in ("PriorEdit", "sw"):
 print()
 
 print("=" * 78)
-print("Table 7  asserted transition (columns) given the true transition (blocks)")
+print("Table 6  asserted transition (columns) given the true transition (blocks)")
 print("=" * 78)
 COLS = ["none", "new", "resolved", "persistent"]
 print(f"{'':12s}" + "".join(f"{c:>11}" for c in COLS))

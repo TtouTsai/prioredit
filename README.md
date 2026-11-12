@@ -20,7 +20,7 @@ Two contributions, both runnable here:
 
 No GPU, no model weights, and no image data are needed — the released generations and labels are
 enough to recompute the main temporal results: the TCA columns of Table 2, Tables 1 (temporal
-hallucination), 4, 7, 9 and 10, the Change column of Table 8, the strict change classes, and the
+hallucination), 6, 8, 9 and 10, the Change column of Table 7, the strict change classes, and the
 LLM-parser robustness gaps (see `docs/REPRODUCE.md`).
 
 ```bash
@@ -37,7 +37,7 @@ python scripts/metric/temporal_assessment.py \
 ```
 
 This prints Table 2's TCA columns, on the 1337 studies with a real prior (the full confusion
-matrices of Table 7 come from `scripts/analysis/error_directions.py`). Expected (paper Table 2):
+matrices of Table 6 come from `scripts/analysis/error_directions.py`). Expected (paper Table 2):
 
 | method | change P | change R | new P | resolved P | persistent P | resolved TP |
 |---|---:|---:|---:|---:|---:|---:|
@@ -52,7 +52,7 @@ matrices of Table 7 come from `scripts/analysis/error_directions.py`). Expected 
 ```
 prioredit/
 ├── configs/
-│   └── confidence_thresholds.json            per-finding calibration (App. C, Table 6)
+│   └── confidence_thresholds.json            per-finding calibration (App. C, Table 5)
 │
 ├── data/
 │   ├── labels/                               official CheXpert states — the TCA ground truth
@@ -65,7 +65,7 @@ prioredit/
 │   │   ├── llmrg4_sn.json                    LLM-RG4 image-only base
 │   │   ├── cxrmate_{withprior,noprior}.json  CXRMate, prior / withheld (Table 1)
 │   │   ├── mlrg_{withprior,noprior}.json     MLRG, prior / withheld (Table 1)
-│   │   └── qwen3vl_imageonly.json            Qwen3-VL-2B image-only base (App. F, Table 8)
+│   │   └── qwen3vl_imageonly.json            Qwen3-VL-2B image-only base (App. F, Table 7)
 │   ├── llm_parser/                           LLM-parser asserted transitions (App. E)
 │   │   ├── asserted_*_qwen3.json             Qwen3-30B-A3B re-extraction
 │   │   ├── asserted_*_medgemma.json          MedGemma-27B re-extraction
